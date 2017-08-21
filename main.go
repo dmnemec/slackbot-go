@@ -9,13 +9,23 @@ import (
 	"strings"
 )
 
+const hookGen = "https://hooks.slack.com/services/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"
+const json = "application/json"
+
 func main() {
-	const hookGen = "https://hooks.slack.com/services/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"
-	const json = "application/json"
-	var payload string
+	var message string
 	if len(os.Args) > 1 {
-		payload = strings.Join(os.Args[1:], " ")
+		message = strings.Join(os.Args[1:], " ")
 	}
+
+	status := postGeneral(message)
+	if status != 200 {
+		fmt.Println("The message was not sent")
+	}
+
+}
+
+func postGeneral(payload string) int {
 	var body = []byte(`{"text":"` + payload + `"}`)
 
 	fmt.Println(string(body[:]))
@@ -24,5 +34,6 @@ func main() {
 		log.Fatal(err)
 	}
 	defer req.Body.Close()
-	fmt.Printf("Response Code: %d\n", req.StatusCode)
+
+	return req.StatusCode
 }
