@@ -12,17 +12,17 @@ import (
 func main() {
 	const hookGen = "https://hooks.slack.com/services/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"
 	const json = "application/json"
-	var payload = "test message"
-
+	var payload string
 	if len(os.Args) > 1 {
 		payload = strings.Join(os.Args[1:], " ")
 	}
 	var body = []byte(`{"text":"` + payload + `"}`)
-	fmt.Printf(string(body[:]))
+
+	fmt.Println(string(body[:]))
 	req, err := http.Post(hookGen, json, bytes.NewBuffer(body))
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer req.Body.Close()
-	fmt.Printf("Response Code:", req.StatusCode)
+	fmt.Printf("Response Code: %d\n", req.StatusCode)
 }
