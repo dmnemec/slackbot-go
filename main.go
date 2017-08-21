@@ -11,6 +11,7 @@ import (
 
 const hookGen = "https://hooks.slack.com/services/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"
 const json = "application/json"
+const basecampEventsURL = ""
 
 func main() {
 	var message string
@@ -25,6 +26,7 @@ func main() {
 
 }
 
+// Posts a regular message to the General channel in Slack
 func postGeneral(payload string) int {
 	var body = []byte(`{"text":"` + payload + `"}`)
 
@@ -36,4 +38,29 @@ func postGeneral(payload string) int {
 	defer req.Body.Close()
 
 	return req.StatusCode
+}
+
+// Retreives all events from Basecamp
+func getEvents() {
+	//TODO add "since" field for URL
+
+	//make new client
+	client := &http.Client{}
+
+	//don't thnk I need this line
+	//resp, err := http.Get(basecampEventsURL)
+
+	// build new request
+	req, err := http.NewRequest("GET", basecampEventsURL, nil)
+
+	// add additional headers
+	req.Header.Add("User-Agent", "Agent-Smith (devin.nemec@banno.com)")
+
+	// send request
+	resp, err := client.Do(req)
+
+	// close request
+	defer resp.Body.Close()
+
+	fmt.Printf(resp.Body)
 }
