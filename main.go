@@ -2,11 +2,11 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
-	//	"net/url"
 	"os"
 	"strings"
 	"time"
@@ -14,7 +14,7 @@ import (
 
 const (
 	hookGen          = "https://hooks.slack.com/services/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"
-	json             = "application/json"
+	jsonA            = "application/json"
 	bcmpApi          = "https://basecamp.com/"
 	bcmpApiVer       = "/api/v1/"
 	bcmpApiEvnt      = "events.json?since="
@@ -44,7 +44,7 @@ func postGeneral(payload string) int {
 	var body = []byte(`{"text":"` + payload + `"}`)
 
 	fmt.Println(string(body[:]))
-	req, err := http.Post(hookGen, json, bytes.NewBuffer(body))
+	req, err := http.Post(hookGen, jsonA, bytes.NewBuffer(body))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -97,7 +97,7 @@ func getEvents(sinceT time.Time) {
 
 	// add additional headers
 	req.Header.Add("User-Agent", uaString)
-	req.Header.Add("Content-Type", json)
+	req.Header.Add("Content-Type", jsonA)
 
 	// send request
 	resp, err := client.Do(req)
@@ -114,6 +114,9 @@ func getEvents(sinceT time.Time) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	bs := string(body)
-	fmt.Print(bs)
+	//bs := string(body)
+	//fmt.Print(bs)
+	events := make([]Event, 0)
+	json.Unmarshal(body, &events)
+	fmt.Printf("%v", events[0])
 }
