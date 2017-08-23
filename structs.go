@@ -26,7 +26,7 @@ type EventableO struct {
 
 type CreatorO struct {
 	Id                  int    `json:"id"`
-	name                string `json:"name"`
+	Name                string `json:"name"`
 	Avatar_url          string `json:"avatar_url"`
 	Fullsize_avatar_url string `json:"fullsize_avatar_url"`
 }
