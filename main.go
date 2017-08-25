@@ -108,15 +108,17 @@ func getEvents(sinceT time.Time) {
 	// close request
 	defer resp.Body.Close()
 
-	// print body
+	// print the first event (for testing)
 	fmt.Println("Basecamp Response Status Code: " + resp.Status)
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
-	//bs := string(body)
-	//fmt.Print(bs)
 	events := make([]Event, 0)
 	json.Unmarshal(body, &events)
-	fmt.Printf("%v", events[0])
+	for r, e := range events {
+		fmt.Printf("\n\nRecord %v of %v\n", r+1, len(events))
+		e.Print()
+
+	}
 }
