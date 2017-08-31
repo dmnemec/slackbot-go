@@ -78,3 +78,61 @@ func (e *CreatorO) Print() {
 		"   Fullsize_avatar_url = %v\n",
 		e.Id, e.Name, e.Avatar_url, e.Fullsize_avatar_url)
 }
+
+type Project struct {
+	ID              int    `json:"id"`
+	Name            string `json:"name"`
+	Description     string `json:"description"`
+	Archived        bool   `json:"archived"`
+	CreatedAt       string `json:"created_at"`
+	UpdatedAt       string `json:"updated_at"`
+	Template        bool   `json:"template"`
+	Starred         bool   `json:"starred"`
+	Trashed         bool   `json:"trashed"`
+	Draft           bool   `json:"draft"`
+	IsClientProject bool   `json:"is_client_project"`
+	Color           string `json:"color"`
+	Creator         struct {
+		ID                int    `json:"id"`
+		Name              string `json:"name"`
+		AvatarURL         string `json:"avatar_url"`
+		FullsizeAvatarURL string `json:"fullsize_avatar_url"`
+	} `json:"creator"`
+	Accesses struct {
+		Count     int    `json:"count"`
+		UpdatedAt string `json:"updated_at"`
+		URL       string `json:"url"`
+		AppURL    string `json:"app_url"`
+	} `json:"accesses"`
+	Attachments struct {
+		Count     int         `json:"count"`
+		UpdatedAt interface{} `json:"updated_at"`
+		URL       string      `json:"url"`
+		AppURL    string      `json:"app_url"`
+	} `json:"attachments"`
+	CalendarEvents struct {
+		Count     int    `json:"count"`
+		UpdatedAt string `json:"updated_at"`
+		URL       string `json:"url"`
+		AppURL    string `json:"app_url"`
+	} `json:"calendar_events"`
+	Documents struct {
+		Count     int         `json:"count"`
+		UpdatedAt interface{} `json:"updated_at"`
+		URL       string      `json:"url"`
+		AppURL    string      `json:"app_url"`
+	} `json:"documents"`
+	Topics struct {
+		Count     int    `json:"count"`
+		UpdatedAt string `json:"updated_at"`
+		URL       string `json:"url"`
+		AppURL    string `json:"app_url"`
+	} `json:"topics"`
+	Todolists struct {
+		RemainingCount int    `json:"remaining_count"`
+		CompletedCount int    `json:"completed_count"`
+		UpdatedAt      string `json:"updated_at"`
+		URL            string `json:"url"`
+		AppURL         string `json:"app_url"`
+	} `json:"todolists"`
+}
