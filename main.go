@@ -43,7 +43,7 @@ func main() {
 	}
 }
 
-// Posts a regular message to the General channel in Slack
+// Posts a regular message to the channel in Slack
 func postGeneral(payload string) {
 	var body = []byte(`{"text":"` + payload + `"}`)
 
@@ -56,6 +56,30 @@ func postGeneral(payload string) {
 
 	//	return req.StatusCode
 }
+
+//TODO
+/*
+// Posts a fancy message to the channel
+func postFancy(fallback, summary, excerpt string) {
+	var body = []byte(`{"attachements":[{` +
+		`"fallback":"` + fallback + `",` +
+		`"text":"` + summary + `",` +
+		`"color":"#36a64f",` +
+		`"fields": [` +
+		`{` +
+
+		`}`)
+
+	fmt.Println(string(body[:]))
+	req, err := http.Post(hookGen, jsonA, bytes.NewBuffer(body))
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer req.Body.Close()
+
+	//	return req.StatusCode
+}
+*/
 
 // Retreives all events from Basecamp
 func getEvents(sinceT time.Time) time.Time {
@@ -117,7 +141,8 @@ func getEvents(sinceT time.Time) time.Time {
 	events := make([]Event, 0)
 	json.Unmarshal(body, &events)
 	for r, e := range events {
-		if strings.Contains(e.Target, "Hosting Account Setup Questions") && strings.Contains(e.Action, "commented on") {
+		if (strings.Contains(e.Target, "Hosting Account Questions") || strings.Contains(e.Target, "Hosting Account Setup Questions")) && strings.Contains(e.Action, "commented on") {
+			//if strings.Contains(e.Target, "Hosting Account Setup Questions") && strings.Contains(e.Action, "commented on") {
 			fmt.Printf("\n\nRecord %v of %v\n", r+1, len(events))
 			e.Print()
 			postGeneral(buildPost(e))
