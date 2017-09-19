@@ -26,8 +26,20 @@ const (
 )
 
 func main() {
+	settings := loadConfig("config.json")
 	//var message string
 	var timestamp time.Time
+	var err error
+	timestamp, err = time.Parse(time.RFC1123, settings.Last_update)
+	/*
+		timebytes := []byte(settings.Last_update)
+		err := timestamp.UnmarshalText(timebytes)
+	*/
+	if err != nil {
+		fmt.Println("Unable to read old time.\n")
+		log.Fatal(err)
+	}
+
 	//if len(os.Args) > 1 {
 	//		message = strings.Join(os.Args[1:], " ")
 	//	}
@@ -38,9 +50,59 @@ func main() {
 	}
 	*/
 	for {
-		//fmt.Println("Retriving events then waiting 1 minute.")
 		timestamp = getEvents(timestamp)
+		settings.Last_update = timestamp.Format(string(time.RFC1123))
+		if err != nil {
+			fmt.Println("Unable to store old time as string.")
+			log.Fatal(err)
+		}
+		err = updateConfig(settings, "config.json")
+		if err != nil {
+			log.Fatal(err)
+			fmt.Println("There was a problem updating the config file.")
+			os.Exit(1)
+		}
 	}
+}
+
+// Loads config file
+func loadConfig(filename string) Config {
+	raw, err := ioutil.ReadFile(filename)
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
+	var out Config
+	json.Unmarshal(raw, &out)
+	return out
+}
+
+// Update config file
+func updateConfig(new Config, filename string) error {
+	//Turn JSON into bytes for writing
+	bytes, err := json.Marshal(new)
+	if err != nil {
+		fmt.Println(err.Error())
+		return err
+	}
+
+	//Overwrite old file
+	file, err := os.Create(filename)
+	if err != nil {
+		fmt.Println(err.Error())
+		return err
+	}
+	defer file.Close()
+
+	//Put JSON into new file
+	_, err = file.Write(bytes)
+	if err != nil {
+		fmt.Println(err.Error())
+		return err
+	}
+	file.Sync()
+
+	return nil
 }
 
 // Posts a regular message to the channel in Slack
@@ -57,7 +119,7 @@ func postGeneral(payload string) {
 	//	return req.StatusCode
 }
 
-//TODO
+//TODO Finish This
 /*
 // Posts a fancy message to the channel
 func postFancy(fallback, summary, excerpt string) {
@@ -140,12 +202,14 @@ func getEvents(sinceT time.Time) time.Time {
 	}
 	events := make([]Event, 0)
 	json.Unmarshal(body, &events)
-	for r, e := range events {
-		if (strings.Contains(e.Target, "Hosting Account Questions") || strings.Contains(e.Target, "Hosting Account Setup Questions")) && strings.Contains(e.Action, "commented on") {
-			//if strings.Contains(e.Target, "Hosting Account Setup Questions") && strings.Contains(e.Action, "commented on") {
-			fmt.Printf("\n\nRecord %v of %v\n", r+1, len(events))
-			e.Print()
-			postGeneral(buildPost(e))
+	for i := len(events) - 1; i >= 0; i-- {
+		fmt.Printf("\n\nRecord %v of %v\n", i+1, len(events))
+		//for r, e := range events {
+		if strings.Contains(events[i].Target, "Hosting Account Questions") || strings.Contains(events[i].Target, "Hosting Account Setup Questions") {
+			//if (strings.Contains(e.Target, "Hosting Account Questions") || strings.Contains(e.Target, "Hosting Account Setup Questions")) && strings.Contains(e.Action, "commented on") {
+			fmt.Printf("\n\nRecord %v of %v\n", i+1, len(events))
+			events[i].Print()
+			postGeneral(buildPost(events[i]))
 		}
 	}
 

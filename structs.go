@@ -136,3 +136,7 @@ type Project struct {
 		AppURL         string `json:"app_url"`
 	} `json:"todolists"`
 }
+
+type Config struct {
+	Last_update string `json:"last-update"`
+}
