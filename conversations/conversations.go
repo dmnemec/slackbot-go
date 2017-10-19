@@ -1,5 +1,31 @@
 package conversations
 
+/*
+This package is a Go/Golang implementation of the Conversations API for Slack.
+https://api.slack.com/docs/conversations-api
+
+Completion List
+[ ] Archive
+[x] Close
+[x] Create
+[x] Create Private
+[ ] History
+[ ] Info
+[x] Invite
+[ ] Join
+[ ] Kick
+[ ] Leave
+[ ] List
+[ ] Members
+[ ] Open
+[ ] Rename
+[ ] Replies
+[ ] Set Purpose
+[ ] Set Topic
+[ ] Unarchive
+
+*/
+
 import (
 	"errors"
 	"net/http"
@@ -36,7 +62,23 @@ func (c *Client) Archive() {
 // Close
 // Closes a direct message or multi-person direct message
 // https://api.slack.com/methods/conversations.close
-func (c *Client) Close() {
+func (c *Client) Close(name string) (r *http.Response, e error) {
+	//Validate name string
+	if !validChannel(name) {
+		return errors.New("Invalid channel name.")
+	}
+	//Build request
+	h := http.Client()
+	p := url.Values{}
+	p.Add("token", c.token)
+	p.Add("channel", name)
+	req, err := http.PostForm(url+"close", p)
+	check(err)
+	//Send Request
+	res, e := h.Do(req)
+	check(err)
+	//Return Response
+	return res, nil
 }
 
 // Create
@@ -50,7 +92,7 @@ func (c *Client) Create(name string) (r *http.Response, e error) {
 	//Build request
 	h := http.Client()
 	p := url.Values{}
-	p.Add("token", t)
+	p.Add("token", c.token)
 	p.Add("name", name)
 	req, err := http.PostForm(url+"create", p)
 	check(err)
@@ -72,7 +114,7 @@ func (c *Client) CreatePrivate(name string) (r *http.Response, e error) {
 	//Build request
 	h := http.Client()
 	p := url.Values{}
-	p.Add("token", t)
+	p.Add("token", c.token)
 	p.Add("name", name)
 	p.Add("is_private", "true")
 	req, err := http.PostForm(url+"create", p)
@@ -97,74 +139,91 @@ func (c *Client) Info() {
 }
 
 // Invite
-//
-//
-func (c *Client) Invite() {
+// Invites users to a channel.
+// https://api.slack.com/methods/conversations.invite
+func (c *Client) Invite(name string, users ...string) (r *http.Response, e error) {
+	//Validate name string
+	if !validChannel(name) {
+		return errors.New("Invalid channel name.")
+	}
+	//Build request
+	h := http.Client()
+	p := url.Values{}
+	p.Add("token", c.token)
+	p.Add("channel", name)
+	p.Add("users", strings.Join(users, ","))
+	req, err := http.PostForm(url+"create", p)
+	check(err)
+	//Send Request
+	res, e := h.Do(req)
+	check(err)
+	//Return Response
+	return res, nil
 }
 
 // Join
-//
-//
+// Joins an existing conversation.
+// https://api.slack.com/methods/conversations.join
 func (c *Client) Join() {
 }
 
 // Kick
-//
-//
+// Removes a user from a conversation.
+// https://api.slack.com/methods/conversations.kick
 func (c *Client) Kick() {
 }
 
 // Leave
-//
-//
+// Leaves a conversation.
+// https://api.slack.com/methods/conversations.leave
 func (c *Client) Leave() {
 }
 
 // List
-//
-//
+// Lists all channels in a Slack team.
+// https://api.slack.com/methods/conversations.list
 func (c *Client) List() {
 }
 
 // Members
-//
-//
+// Retrieve members of a conversation.
+// https://api.slack.com/methods/conversations.members
 func (c *Client) Members() {
 }
 
 // Open
-//
-//
+// Opens or resumes a direct message or multi-person direct message.
+// https://api.slack.com/methods/conversations.open
 func (c *Client) Open() {
 }
 
 // Rename
-//
-//
+// Renames a conversation.
+// https://api.slack.com/methods/conversations.rename
 func (c *Client) Rename() {
 }
 
 // Replies
-//
-//
+// Retrieve a thread of messages posted to a conversation
+// https://api.slack.com/methods/conversations.replies
 func (c *Client) Replies() {
 }
 
 // SetPurpose
-//
-//
+// Sets the purpose for a conversation.
+// https://api.slack.com/methods/conversations.setPurpose
 func (c *Client) SetPurpose() {
 }
 
 // SetTopic
-//
-//
+// Sets the topic for a conversation.
+// https://api.slack.com/methods/conversations.setTopic
 func (c *Client) SetTopic() {
 }
 
 // Unarchive
-//
-//
+// Reverses conversation archival.
+// https://api.slack.com/methods/conversations.unarchive
 func (c *Client) Unarchive() {
 }
 
