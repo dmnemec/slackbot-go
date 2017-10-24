@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 )
 
 // Loads config file
@@ -45,4 +46,14 @@ func UpdateConfig(new *Config, filename string) error {
 	file.Sync()
 
 	return nil
+}
+
+// Retrieves webhook links from a config
+func GetHook(c Config, name string) string {
+	for _, n := range c.Webhooks {
+		if strings.Compare(name, n.Name) == 0 {
+			return n.Url
+		}
+	}
+	return ""
 }

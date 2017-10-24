@@ -19,22 +19,28 @@ const (
 	bcmpApiEvnt      = "events.json?since="
 	bcmpApiProj      = "projects"
 	jsonA            = "application/json"
-	userAgent        = "Agent-Smith (devin.nemec@banno.com)"
-	userAgentVersion = "0.1"
+	userAgent        = "Slackbot-Go (github.com/dmnemec/slackbot-go)"
+	userAgentVersion = " v0.2"
 	uaString         = userAgent + userAgentVersion
 )
 
-// Pulls events from Basecamp
-func BasecampHostingWatcher(timestamp *time.Time, settings *core.Config) {
+// Pulls events from Basecamp and do something with them
+// This is an example function showing a way to implement these packages
+// It will continuously pull events from Basecamp and perform a function on them
+func BasecampWatcher(timestamp *time.Time, settings *core.Config) {
 	var err error
 	for {
-		timestamp = getEvents(timestamp)
+		timestamp = ProcessEvents(timestamp, func(e []Event) {
+			for _, i := range e {
+				i.Print()
+			}
+		})
 		settings.Last_update = timestamp.Format(string(time.RFC1123))
 		if err != nil {
 			fmt.Println("Unable to store old time as string.")
 			log.Fatal(err)
 		}
-		err = core.UpdateConfig(settings, "config.json")
+		err = core.UpdateConfig(settings, os.Args[1])
 		if err != nil {
 			log.Fatal(err)
 			fmt.Println("There was a problem updating the config file.")
@@ -43,8 +49,54 @@ func BasecampHostingWatcher(timestamp *time.Time, settings *core.Config) {
 	}
 }
 
+// Retreives all events from Basecamp and performs a function on them
+func ProcessEvents(sinceT *time.Time, p func([]Event)) *time.Time {
+	// create events slice
+	events := make([]Event, 0)
+	var err error
+
+	// add "since" field for URL
+	var since string
+	if sinceT.IsZero() {
+		startTime := time.Now()
+		startTime = startTime.Add(-30 * time.Minute)
+		sinceB, err := startTime.MarshalText()
+		if err != nil {
+			log.Fatal(err)
+		}
+		since = string(sinceB[:])
+		since = strings.Trim(since, `"`)
+	} else {
+		sinceB, err := sinceT.MarshalText()
+		if err != nil {
+			log.Fatal(err)
+		}
+		since = string(sinceB[:])
+		since = strings.Trim(since, `"`)
+	}
+
+	// Get array of events
+	GetBasecampList(since, &events)
+
+	// Process events
+	p(events)
+
+	//return most recent timestamp
+	if len(events) > 0 {
+		sincer := []byte(events[0].Created_at)
+		err = sinceT.UnmarshalText(sincer)
+		if err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		fmt.Println("No events found in the last 5 seconds.")
+	}
+	time.Sleep(5 * time.Second)
+	return sinceT
+}
+
 // Return a list of events
-func getBasecampList(since string, events *[]Event) error {
+func GetBasecampList(since string, events *[]Event) error {
 	bcmpId := os.Getenv("BASECAMP_ID")
 	userBcmp := os.Getenv("BASECAMP_USER")
 	passBcmp := os.Getenv("BASECAMP_PASS")
@@ -98,7 +150,7 @@ func getBasecampList(since string, events *[]Event) error {
 }
 
 // Returns Basecamp project name
-func getProjectName(p string) string {
+func GetProjectName(p string) string {
 	//make new client
 	client := &http.Client{}
 
@@ -130,17 +182,13 @@ func getProjectName(p string) string {
 
 	// capture and return project name
 	var proj Project
-	//err = json.NewDecoder(resp.Body).Decode(proj)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
 	body, err := ioutil.ReadAll(resp.Body)
 	json.Unmarshal(body, &proj)
 	return proj.Name
 }
 
-// Retreives all events from Basecamp
-func getEvents(sinceT *time.Time) *time.Time {
+// Retreives all events from Basecamp since a time
+func GetNewEvents(sinceT *time.Time) (*time.Time, []Event) {
 	// create events slice
 	events := make([]Event, 0)
 	var err error
@@ -166,17 +214,7 @@ func getEvents(sinceT *time.Time) *time.Time {
 	}
 
 	// Return list of events
-	getBasecampList(since, &events)
-
-	// Iterate through events
-	for i := len(events) - 1; i >= 0; i-- {
-		fmt.Printf("Record %v of %v\n", i+1, len(events))
-		if strings.Contains(events[i].Target, "Hosting Account Questions") || strings.Contains(events[i].Target, "Hosting Account Setup Questions") {
-			fmt.Printf("Record %v of %v\n", i+1, len(events))
-			events[i].Print()
-			core.PostGeneral(buildPost(events[i]))
-		}
-	}
+	GetBasecampList(since, &events)
 
 	//return most recent timestamp
 	if len(events) > 0 {
@@ -189,13 +227,5 @@ func getEvents(sinceT *time.Time) *time.Time {
 		fmt.Println("No events found in the last 5 seconds.")
 	}
 	time.Sleep(5 * time.Second)
-	return sinceT
-}
-
-// Creates the message post for Slack
-func buildPost(e Event) string {
-	projectName := getProjectName(e.Html_url[38:46])
-	fmt.Println(e.Html_url[38:45])
-	body := "*<" + e.Html_url + "|" + e.Creator.Name + " " + e.Action + " " + projectName + ">*\n_" + e.Excerpt + "_"
-	return body
+	return sinceT, events
 }

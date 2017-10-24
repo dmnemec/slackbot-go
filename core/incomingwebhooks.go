@@ -8,17 +8,29 @@ import (
 )
 
 const (
-	hookGen = "https://hooks.slack.com/services/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"
-	jsonA   = "application/json"
+	jsonA = "application/json"
 )
 
 // Posts a regular message to the channel in Slack
-func PostGeneral(payload string) {
+func PostChannel(payload, name string, config Config) {
 	var body = []byte(`{"text":"` + payload + `"}`)
 
 	fmt.Println(string(body[:]))
-	req, err := http.Post(hookGen, jsonA, bytes.NewBuffer(body))
+	url := GetHook(config, name)
+	req, err := http.Post(url, jsonA, bytes.NewBuffer(body))
 	if err != nil {
+		log.Fatal(err)
+	}
+	defer req.Body.Close()
+}
+
+func PostReply(payload, responseUrl string) {
+	var body = []byte(`{"text":"` + payload + `"}`)
+
+	fmt.Println(string(body[:]))
+	req, err := http.Post(responseUrl, jsonA, bytes.NewBuffer(body))
+	if err != nil {
+		fmt.Println(err.Error())
 		log.Fatal(err)
 	}
 	defer req.Body.Close()
@@ -26,19 +38,35 @@ func PostGeneral(payload string) {
 	//	return req.StatusCode
 }
 
-//TODO Finish This
 /*
+//TODO Finish This
 // Posts a fancy message to the channel
-func postFancy(fallback, summary, excerpt string) {
-	var body = []byte(`{"attachements":[{` +
-		`"fallback":"` + fallback + `",` +
-		`"text":"` + summary + `",` +
-		`"color":"#36a64f",` +
-		`"fields": [` +
-		`{` +
+func PostFancy(summary, excerpt, color string) {
+	color = "#36a64f"
+	message := AttachmentMessage{}
+	var message.Attachments [1]AttachmentObject
+	message.Attachments[0].Fallback = excerpt
+	message.Attachments[0].Text = excerpt
+	message.Attachments[0].Color = color //TODO create custom color maker
+	message.Attachments[0].Pretext = "Definately not self-aware"
+	message.Attachments[0].Title = summary
+	message.Attachments[0].Title_Link = ""
 
-		`}`)
+	body, err := json.Marshal(message)
+	if err != nil {
+		log.Fatal(err)
+	}
+	/*
+		var body = []byte(`{"attachements":[{` +
+			`"fallback":"` + fallback + `",` +
+			`"text":"` + summary + `",` +
+			`"color":"#36a64f",` +
+			`"fields": [` +
+			`{` +
 
+			`}`)
+*/
+/*
 	fmt.Println(string(body[:]))
 	req, err := http.Post(hookGen, jsonA, bytes.NewBuffer(body))
 	if err != nil {
@@ -47,5 +75,4 @@ func postFancy(fallback, summary, excerpt string) {
 	defer req.Body.Close()
 
 	//	return req.StatusCode
-}
-*/
+}*/

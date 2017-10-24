@@ -1,1 +1,13 @@
-{"last-update":"Thu, 21 Sep 2017 14:08:44 CDT"}
+{
+	"last-update":"Tue, 17 Oct 2017 19:29:27 CDT",
+	"webhooks":[
+		{
+			"channel_name":"team-ops-basecamp",
+			"url":"https://hooks.slack.com/services///"
+		},
+		{
+			"channel_name":"org-ops",
+			"url":"https://hooks.slack.com/services///"
+		}
+	]
+}
