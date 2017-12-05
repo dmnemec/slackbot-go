@@ -13,7 +13,8 @@ const (
 
 // Posts a regular message to the channel in Slack
 func PostChannel(payload, name string, config Config) {
-	var body = []byte(`{"text":"` + payload + `"}`)
+	//var body = []byte(`{"text":"` + payload + `"}`)
+	var body = []byte(`{"link_names":1,"parse":"full","text":"` + payload + `"}`)
 
 	fmt.Println(string(body[:]))
 	url := GetHook(config, name)
@@ -25,7 +26,7 @@ func PostChannel(payload, name string, config Config) {
 }
 
 func PostReply(payload, responseUrl string) {
-	var body = []byte(`{"text":"` + payload + `"}`)
+	var body = []byte(`{"link_names":1,"parse":"full","text":"` + payload + `"}`)
 
 	fmt.Println(string(body[:]))
 	req, err := http.Post(responseUrl, jsonA, bytes.NewBuffer(body))
