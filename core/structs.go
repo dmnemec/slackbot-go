@@ -8,8 +8,10 @@ type Config struct {
 }
 
 type Hook struct {
-	Name string `json:"channel_name"`
-	Url  string `json:"url"`
+	Name  string `json:"channel_name"`
+	Url   string `json:"url"`
+	Token string `json:"token"`
+	Team  string `json:"team_id"`
 }
 
 type AttachmentMessage struct {

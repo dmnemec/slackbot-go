@@ -49,11 +49,11 @@ func UpdateConfig(new *Config, filename string) error {
 }
 
 // Retrieves webhook links from a config
-func GetHook(c Config, name string) string {
+func GetHook(c Config, name string) (string, string, string) {
 	for _, n := range c.Webhooks {
 		if strings.Compare(name, n.Name) == 0 {
-			return n.Url
+			return n.Url, n.Token, n.Team
 		}
 	}
-	return ""
+	return "", "", ""
 }
