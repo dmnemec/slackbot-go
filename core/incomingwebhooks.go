@@ -17,7 +17,7 @@ func PostChannel(payload, name string, config Config) {
 	var body = []byte(`{"text":"` + payload + `"}`)
 
 	fmt.Println(string(body[:]))
-	url := GetHook(config, name)
+	url, _, _ := GetHook(config, name)
 	req, err := http.Post(url, jsonA, bytes.NewBuffer(body))
 	if err != nil {
 		log.Fatal(err)
