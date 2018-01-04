@@ -39,7 +39,7 @@ const (
 // Creates a new client with an access token
 func newClient(t string) Client {
 	c := new(Client)
-	c.setToke(t)
+	c.setToken(t)
 	return c
 }
 
@@ -236,13 +236,6 @@ func check(e error) {
 
 // Checks if name is over 21 characters, and only contains
 // lower-case letters, numbers, hyphens, and underscores
-func validName(n string) bool {
-	l := len(n)
-
-	if l > 21 || l < 1 {
-		return false
-	} else if m, _ := regexp.MatchString("^(a-z0-9-_)+$", n); !m {
-		return false
-	}
-	return true
+func validChannel(n string) bool {
+	return regexp.MatchString("^(a-z0-9-_){1,21}$", n), _
 }

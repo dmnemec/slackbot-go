@@ -3,8 +3,10 @@ package core
 import ()
 
 type Config struct {
-	Last_update string `json:"last-update"`
-	Webhooks    []Hook `json:"webhooks,omitempty"`
+	Token       string    `json:"token, omitempty"`
+	Last_update string    `json:"last-update"`
+	Webhooks    []Hook    `json:"webhooks,omitempty"`
+	Channels    []Channel `json:"channels, omitempty"`
 }
 
 type Hook struct {
@@ -13,6 +15,26 @@ type Hook struct {
 	Token string `json:"token"`
 	Team  string `json:"team_id"`
 }
+
+type Channel struct {
+	Name string `json:"name"`
+	Id   string `json:"id"`
+}
+
+func (c *Config) GetChannelId(name string) string {
+	for _, v := range c.Channels {
+		if v.Name == name {
+			return v.Name
+		}
+	}
+	return ""
+}
+
+func (c *Config) GetToken() string {
+	return c.Token
+}
+
+// Pretty sure this stuff below isn't currently used either
 
 type AttachmentMessage struct {
 	Attachments []AttachmentObject `json:"attachments,omitempty"`
