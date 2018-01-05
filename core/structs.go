@@ -24,7 +24,7 @@ type Channel struct {
 func (c *Config) GetChannelId(name string) string {
 	for _, v := range c.Channels {
 		if v.Name == name {
-			return v.Name
+			return v.Id
 		}
 	}
 	return ""
