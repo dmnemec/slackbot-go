@@ -36,7 +36,7 @@ func (c *Config) GetChannelId(name string) string {
 	return ""
 }
 
-func (c *Config) GetChannelss() map[string]string {
+func (c *Config) GetChannels() map[string]string {
 	m := make(map[string]string)
 	for _, v := range c.Channels {
 		m[v.Name] = v.Id
