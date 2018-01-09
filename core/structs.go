@@ -36,7 +36,13 @@ func (c *Config) GetChannelId(name string) string {
 	return ""
 }
 
-//TODO make a GetChannelIds function that mirrors GetUserIds
+func (c *Config) GetChannelss() map[string]string {
+	m := make(map[string]string)
+	for _, v := range c.Channels {
+		m[v.Name] = v.Id
+	}
+	return m
+}
 
 func (c *Config) GetUserId(name string) string {
 	for _, v := range c.Team {
@@ -48,7 +54,7 @@ func (c *Config) GetUserId(name string) string {
 }
 
 func (c *Config) GetUserIds() map[string]string {
-	m = make(map[string]string)
+	m := make(map[string]string)
 	for _, v := range c.Team {
 		m[v.Name] = v.Id
 	}
