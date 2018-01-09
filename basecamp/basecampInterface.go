@@ -88,8 +88,6 @@ func ProcessEvents(sinceT *time.Time, p func([]Event)) *time.Time {
 		if err != nil {
 			log.Fatal(err)
 		}
-	} else {
-		fmt.Println("No events found in the last 5 seconds.")
 	}
 	time.Sleep(5 * time.Second)
 	return sinceT

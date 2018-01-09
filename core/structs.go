@@ -7,6 +7,7 @@ type Config struct {
 	Last_update string    `json:"last-update"`
 	Webhooks    []Hook    `json:"webhooks,omitempty"`
 	Channels    []Channel `json:"channels, omitempty"`
+	Team        []User    `json:"team, omitempty"`
 }
 
 type Hook struct {
@@ -21,6 +22,11 @@ type Channel struct {
 	Id   string `json:"id"`
 }
 
+type User struct {
+	Name string `json:"name"`
+	Id   string `json:"id"`
+}
+
 func (c *Config) GetChannelId(name string) string {
 	for _, v := range c.Channels {
 		if v.Name == name {
@@ -28,6 +34,25 @@ func (c *Config) GetChannelId(name string) string {
 		}
 	}
 	return ""
+}
+
+//TODO make a GetChannelIds function that mirrors GetUserIds
+
+func (c *Config) GetUserId(name string) string {
+	for _, v := range c.Team {
+		if v.Name == name {
+			return v.Id
+		}
+	}
+	return ""
+}
+
+func (c *Config) GetUserIds() map[string]string {
+	m = make(map[string]string)
+	for _, v := range c.Team {
+		m[v.Name] = v.Id
+	}
+	return m
 }
 
 func (c *Config) GetToken() string {
