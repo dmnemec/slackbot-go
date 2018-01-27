@@ -3,11 +3,11 @@ package basecamp
 import (
 	"encoding/json"
 	"fmt"
-	core "github.com/dmnemec/slackbot-go/core"
+	//core "github.com/dmnemec/slackbot-go/core"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
+	//"os"
 	"strconv"
 	"strings"
 	"time"
@@ -27,10 +27,12 @@ const (
 // Pulls events from Basecamp and do something with them
 // This is an example function showing a way to implement these packages
 // It will continuously pull events from Basecamp and perform a function on them
+/*
 func BasecampWatcher(timestamp *time.Time, settings *core.Config) {
 	var err error
+	client := Client{}.New("", "", "")
 	for {
-		timestamp = ProcessEvents(timestamp, func(e []Event) {
+		timestamp = client.ProcessEvents(&timestamp, func(e []Event) {
 			for _, i := range e {
 				i.Print()
 			}
@@ -48,9 +50,22 @@ func BasecampWatcher(timestamp *time.Time, settings *core.Config) {
 		}
 	}
 }
+*/
+
+type Client struct {
+	user        string
+	pass        string
+	environment string
+}
+
+func (c Client) New(u, p, e string) Client {
+	return Client{user: u,
+		pass:        p,
+		environment: e}
+}
 
 // Retreives all events from Basecamp and performs a function on them
-func ProcessEvents(sinceT *time.Time, p func([]Event)) *time.Time {
+func (c *Client) ProcessEvents(sinceT *time.Time, p func([]Event)) time.Time {
 	// create events slice
 	events := make([]Event, 0)
 	var err error
@@ -76,7 +91,7 @@ func ProcessEvents(sinceT *time.Time, p func([]Event)) *time.Time {
 	}
 
 	// Get array of events
-	GetBasecampList(since, &events)
+	c.GetBasecampList(since, &events)
 
 	// Process events
 	p(events)
@@ -90,14 +105,14 @@ func ProcessEvents(sinceT *time.Time, p func([]Event)) *time.Time {
 		}
 	}
 	time.Sleep(5 * time.Second)
-	return sinceT
+	return *sinceT
 }
 
 // Return a list of events
-func GetBasecampList(since string, events *[]Event) error {
-	bcmpId := os.Getenv("BASECAMP_ID")
-	userBcmp := os.Getenv("BASECAMP_USER")
-	passBcmp := os.Getenv("BASECAMP_PASS")
+func (c *Client) GetBasecampList(since string, events *[]Event) error {
+	bcmpId := c.environment
+	userBcmp := c.user
+	passBcmp := c.pass
 	page := 1
 	rem := 50
 	pull := make([]Event, 0)
@@ -148,12 +163,12 @@ func GetBasecampList(since string, events *[]Event) error {
 }
 
 // Returns Basecamp project name
-func GetProjectName(p string) string {
+func (c *Client) GetProjectName(p string) string {
 	//make new client
 	client := &http.Client{}
 
 	// build new request
-	bcmpId := os.Getenv("BASECAMP_ID")
+	bcmpId := c.environment
 	bcmpApiUrl := bcmpApi + bcmpId + bcmpApiVer + bcmpApiProj + "/"
 	req, err := http.NewRequest("GET", bcmpApiUrl+p+".json", nil)
 	if err != nil {
@@ -161,8 +176,8 @@ func GetProjectName(p string) string {
 	}
 
 	// add basic auth
-	userBcmp := os.Getenv("BASECAMP_USER")
-	passBcmp := os.Getenv("BASECAMP_PASS")
+	userBcmp := c.user
+	passBcmp := c.pass
 	req.SetBasicAuth(userBcmp, passBcmp)
 
 	// add additional headers
@@ -186,7 +201,7 @@ func GetProjectName(p string) string {
 }
 
 // Retreives all events from Basecamp since a time
-func GetNewEvents(sinceT *time.Time) (*time.Time, []Event) {
+func (c *Client) GetNewEvents(sinceT *time.Time) (*time.Time, []Event) {
 	// create events slice
 	events := make([]Event, 0)
 	var err error
@@ -212,7 +227,7 @@ func GetNewEvents(sinceT *time.Time) (*time.Time, []Event) {
 	}
 
 	// Return list of events
-	GetBasecampList(since, &events)
+	c.GetBasecampList(since, &events)
 
 	//return most recent timestamp
 	if len(events) > 0 {
