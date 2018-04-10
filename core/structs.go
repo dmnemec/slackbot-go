@@ -27,6 +27,7 @@ type User struct {
 	Id   string `json:"id"`
 }
 
+// Returns a specific channels Id
 func (c *Config) GetChannelId(name string) string {
 	for _, v := range c.Channels {
 		if v.Name == name {
@@ -36,6 +37,22 @@ func (c *Config) GetChannelId(name string) string {
 	return ""
 }
 
+// Takes a list of channel names and returns their Slack Ids
+func (c *Config) GetChannelIds(s ...string) []string {
+	var r []string
+
+	for _, v := range s {
+		for _, n := range c.Channels {
+			if n.Name == v {
+				append(r, n.Id)
+			}
+		}
+	}
+
+	return r
+}
+
+//Returns a map of all channel names and ids
 func (c *Config) GetChannels() map[string]string {
 	m := make(map[string]string)
 	for _, v := range c.Channels {
@@ -44,6 +61,7 @@ func (c *Config) GetChannels() map[string]string {
 	return m
 }
 
+// Returns a specific user's id
 func (c *Config) GetUserId(name string) string {
 	for _, v := range c.Team {
 		if v.Name == name {
@@ -53,7 +71,23 @@ func (c *Config) GetUserId(name string) string {
 	return ""
 }
 
-func (c *Config) GetUserIds() map[string]string {
+// Takes a list of people and returns their Slack Ids
+func (c *Config) GetUserIds(s ...string) []string {
+	var r []string
+
+	for _, v := range s {
+		for _, n := range c.Team {
+			if n.Name == v {
+				append(r, n.Id)
+			}
+		}
+	}
+
+	return r
+}
+
+// Returns a map of all names/user Ids
+func (c *Config) GetUsers() map[string]string {
 	m := make(map[string]string)
 	for _, v := range c.Team {
 		m[v.Name] = v.Id
