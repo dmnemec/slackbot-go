@@ -44,7 +44,7 @@ func (c *Config) GetChannelIds(s ...string) []string {
 	for _, v := range s {
 		for _, n := range c.Channels {
 			if n.Name == v {
-				append(r, n.Id)
+				r = append(r, n.Id)
 			}
 		}
 	}
@@ -78,7 +78,7 @@ func (c *Config) GetUserIds(s ...string) []string {
 	for _, v := range s {
 		for _, n := range c.Team {
 			if n.Name == v {
-				append(r, n.Id)
+				r = append(r, n.Id)
 			}
 		}
 	}
