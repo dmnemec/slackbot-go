@@ -49,7 +49,7 @@ func PostFancy(summary, excerpt, color string) {
 	message.Attachments[0].Fallback = excerpt
 	message.Attachments[0].Text = excerpt
 	message.Attachments[0].Color = color //TODO create custom color maker
-	message.Attachments[0].Pretext = "Definately not self-aware"
+	message.Attachments[0].Pretext = "Definitely not self-aware"
 	message.Attachments[0].Title = summary
 	message.Attachments[0].Title_Link = ""
 

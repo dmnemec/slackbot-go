@@ -1,13 +1,11 @@
 package core
 
-import ()
-
 type Config struct {
-	Token       string    `json:"token, omitempty"`
+	Token       string    `json:"token,omitempty"`
 	Last_update string    `json:"last-update"`
 	Webhooks    []Hook    `json:"webhooks,omitempty"`
-	Channels    []Channel `json:"channels, omitempty"`
-	Team        []User    `json:"team, omitempty"`
+	Channels    []Channel `json:"channels,omitempty"`
+	Team        []User    `json:"team,omitempty"`
 }
 
 type Hook struct {
