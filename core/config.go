@@ -16,7 +16,11 @@ func LoadConfig(filename string) Config {
 		os.Exit(1)
 	}
 	var out Config
-	json.Unmarshal(raw, &out)
+	err = json.Unmarshal(raw, &out)
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
 	return out
 }
 
@@ -43,9 +47,9 @@ func UpdateConfig(new *Config, filename string) error {
 		fmt.Println(err.Error())
 		return err
 	}
-	file.Sync()
+	err = file.Sync()
 
-	return nil
+	return err
 }
 
 // Retrieves webhook links from a config

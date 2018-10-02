@@ -3,10 +3,12 @@ package basecamp
 import (
 	"encoding/json"
 	"fmt"
+
 	//core "github.com/dmnemec/slackbot-go/core"
 	"io/ioutil"
 	"log"
 	"net/http"
+
 	//"os"
 	"strconv"
 	"strings"
@@ -91,14 +93,17 @@ func (c *Client) ProcessEvents(sinceT *time.Time, p func([]Event)) time.Time {
 	}
 
 	// Get array of events
-	c.GetBasecampList(since, &events)
+	err = c.GetBasecampList(since, &events)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// Process events
 	p(events)
 
 	//return most recent timestamp
 	if len(events) > 0 {
-		sincer := []byte(events[0].Created_at)
+		sincer := []byte(events[0].CreatedAt)
 		err = sinceT.UnmarshalText(sincer)
 		if err != nil {
 			log.Fatal(err)
@@ -153,7 +158,10 @@ func (c *Client) GetBasecampList(since string, events *[]Event) error {
 		if err != nil {
 			log.Fatal(err)
 		}
-		json.Unmarshal(body, &pull)
+		err = json.Unmarshal(body, &pull)
+		if err != nil {
+			log.Fatal(err)
+		}
 		*events = append(*events, pull...)
 		rem = len(pull)
 		page = page + 1
@@ -196,7 +204,13 @@ func (c *Client) GetProjectName(p string) string {
 	// capture and return project name
 	var proj Project
 	body, err := ioutil.ReadAll(resp.Body)
-	json.Unmarshal(body, &proj)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = json.Unmarshal(body, &proj)
+	if err != nil {
+		log.Fatal(err)
+	}
 	return proj.Name
 }
 
@@ -227,11 +241,14 @@ func (c *Client) GetNewEvents(sinceT *time.Time) (*time.Time, []Event) {
 	}
 
 	// Return list of events
-	c.GetBasecampList(since, &events)
+	err = c.GetBasecampList(since, &events)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	//return most recent timestamp
 	if len(events) > 0 {
-		sincer := []byte(events[0].Created_at)
+		sincer := []byte(events[0].CreatedAt)
 		err = sinceT.UnmarshalText(sincer)
 		if err != nil {
 			log.Fatal(err)
