@@ -28,8 +28,10 @@ Completion List
 
 import (
 	"errors"
+	"log"
 	"net/http"
-	"net/url"
+	"regexp"
+	"strings"
 )
 
 const (
@@ -65,7 +67,7 @@ func (c *Client) Archive() {
 func (c *Client) Close(name string) (r *http.Response, e error) {
 	//Validate name string
 	if !validChannel(name) {
-		return errors.New("Invalid channel name.")
+		return nil, errors.New("invalid channel name")
 	}
 	//Build request
 	h := http.Client()
@@ -87,7 +89,7 @@ func (c *Client) Close(name string) (r *http.Response, e error) {
 func (c *Client) Create(name string) (r *http.Response, e error) {
 	//Validate name string
 	if !validChannel(name) {
-		return errors.New("Invalid channel name.")
+		return nil, errors.New("invalid channel name")
 	}
 	//Build request
 	h := http.Client()
@@ -109,7 +111,7 @@ func (c *Client) Create(name string) (r *http.Response, e error) {
 func (c *Client) CreatePrivate(name string) (r *http.Response, e error) {
 	//Validate name string
 	if !validChannel(name) {
-		return errors.New("Invalid channel name.")
+		return nil, errors.New("invalid channel name")
 	}
 	//Build request
 	h := http.Client()
@@ -144,7 +146,7 @@ func (c *Client) Info() {
 func (c *Client) Invite(name string, users ...string) (r *http.Response, e error) {
 	//Validate name string
 	if !validChannel(name) {
-		return errors.New("Invalid channel name.")
+		return nil, errors.New("Invalid channel name.")
 	}
 	//Build request
 	h := http.Client()
@@ -188,7 +190,24 @@ func (c *Client) List() {
 // Members
 // Retrieve members of a conversation.
 // https://api.slack.com/methods/conversations.members
-func (c *Client) Members() {
+func (c *Client) Members(channelID string) (*http.Response, error) {
+	var res = new(http.Response)
+	//Validate name string
+	if !validChannel(channelID) {
+		return res, errors.New("Invalid channel name")
+	}
+	//Build request
+	h := http.Client
+	p := url.Values{}
+	p.Add("token", c.token)
+	p.Add("channel", channelID)
+	req, err := http.Get(url + "members?" + p.Encode())
+	check(err)
+	//Send Request
+	res, e := h.Do(req)
+	check(err)
+	//Return Response
+	return res, nil
 }
 
 // Open
