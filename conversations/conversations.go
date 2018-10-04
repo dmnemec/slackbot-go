@@ -66,11 +66,12 @@ func (c *Client) Archive() {
 // Closes a direct message or multi-person direct message
 // https://api.slack.com/methods/conversations.close
 func (c *Client) Close(name string) (r *http.Response, e error) {
+	var res = new(http.Response)
 	//Validate name string
 	valid, err := validChannel(name)
 	check(err)
 	if !valid {
-		return res, errors.New("Invalid channel name")
+		return res, errors.New("invalid channel name")
 	}
 	//Build request
 	h := http.Client()
@@ -80,7 +81,7 @@ func (c *Client) Close(name string) (r *http.Response, e error) {
 	req, err := http.PostForm(convURL+"close", p)
 	check(err)
 	//Send Request
-	res, e := h.Do(req)
+	res, err = h.Do(req)
 	check(err)
 	//Return Response
 	return res, nil
@@ -90,11 +91,12 @@ func (c *Client) Close(name string) (r *http.Response, e error) {
 // Initiates a public channel-based conversation
 // https://api.slack.com/methods/conversations.create
 func (c *Client) Create(name string) (r *http.Response, e error) {
+	var res = new(http.Response)
 	//Validate name string
 	valid, err := validChannel(name)
 	check(err)
 	if !valid {
-		return res, errors.New("Invalid channel name")
+		return res, errors.New("invalid channel name")
 	}
 	//Build request
 	h := http.Client()
@@ -104,7 +106,7 @@ func (c *Client) Create(name string) (r *http.Response, e error) {
 	req, err := http.PostForm(convURL+"create", p)
 	check(err)
 	//Send Request
-	res, e := h.Do(req)
+	res, err = h.Do(req)
 	check(err)
 	//Return Response
 	return res, nil
@@ -114,11 +116,12 @@ func (c *Client) Create(name string) (r *http.Response, e error) {
 // Initiates a private channel-based conversation
 // https://api.slack.com/methods/conversations.create
 func (c *Client) CreatePrivate(name string) (r *http.Response, e error) {
+	var res = new(http.Response)
 	//Validate name string
-	valid, err := validChannel(channelID)
+	valid, err := validChannel(name)
 	check(err)
 	if !valid {
-		return res, errors.New("Invalid channel name")
+		return res, errors.New("invalid channel name")
 	}
 	//Build request
 	h := http.Client()
@@ -129,7 +132,7 @@ func (c *Client) CreatePrivate(name string) (r *http.Response, e error) {
 	req, err := http.PostForm(convURL+"create", p)
 	check(err)
 	//Send Request
-	res, e := h.Do(req)
+	res, err = h.Do(req)
 	check(err)
 	//Return Response
 	return res, nil
@@ -151,11 +154,12 @@ func (c *Client) Info() {
 // Invites users to a channel.
 // https://api.slack.com/methods/conversations.invite
 func (c *Client) Invite(name string, users ...string) (r *http.Response, e error) {
+	var res = new(http.Response)
 	//Validate name string
-	valid, err := validChannel(channelID)
+	valid, err := validChannel(name)
 	check(err)
 	if !valid {
-		return res, errors.New("Invalid channel name")
+		return res, errors.New("invalid channel name")
 	}
 	//Build request
 	h := http.Client()
@@ -166,7 +170,7 @@ func (c *Client) Invite(name string, users ...string) (r *http.Response, e error
 	req, err := http.PostForm(convURL+"create", p)
 	check(err)
 	//Send Request
-	res, e := h.Do(req)
+	res, err = h.Do(req)
 	check(err)
 	//Return Response
 	return res, nil
@@ -205,10 +209,10 @@ func (c *Client) Members(channelID string) (*http.Response, error) {
 	valid, err := validChannel(channelID)
 	check(err)
 	if !valid {
-		return res, errors.New("Invalid channel name")
+		return res, errors.New("invalid channel name")
 	}
 	//Build request
-	h := http.Client
+	h := http.Client()
 	p := url.Values{}
 	p.Add("token", c.token)
 	p.Add("channel", channelID)
