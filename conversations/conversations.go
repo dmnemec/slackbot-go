@@ -67,8 +67,10 @@ func (c *Client) Archive() {
 // https://api.slack.com/methods/conversations.close
 func (c *Client) Close(name string) (r *http.Response, e error) {
 	//Validate name string
-	if !validChannel(name) {
-		return nil, errors.New("invalid channel name")
+	valid, err := validChannel(name)
+	check(err)
+	if !valid {
+		return res, errors.New("Invalid channel name")
 	}
 	//Build request
 	h := http.Client()
@@ -89,8 +91,10 @@ func (c *Client) Close(name string) (r *http.Response, e error) {
 // https://api.slack.com/methods/conversations.create
 func (c *Client) Create(name string) (r *http.Response, e error) {
 	//Validate name string
-	if !validChannel(name) {
-		return nil, errors.New("invalid channel name")
+	valid, err := validChannel(name)
+	check(err)
+	if !valid {
+		return res, errors.New("Invalid channel name")
 	}
 	//Build request
 	h := http.Client()
@@ -111,8 +115,10 @@ func (c *Client) Create(name string) (r *http.Response, e error) {
 // https://api.slack.com/methods/conversations.create
 func (c *Client) CreatePrivate(name string) (r *http.Response, e error) {
 	//Validate name string
-	if !validChannel(name) {
-		return nil, errors.New("invalid channel name")
+	valid, err := validChannel(channelID)
+	check(err)
+	if !valid {
+		return res, errors.New("Invalid channel name")
 	}
 	//Build request
 	h := http.Client()
@@ -146,8 +152,10 @@ func (c *Client) Info() {
 // https://api.slack.com/methods/conversations.invite
 func (c *Client) Invite(name string, users ...string) (r *http.Response, e error) {
 	//Validate name string
-	if !validChannel(name) {
-		return nil, errors.New("Invalid channel name.")
+	valid, err := validChannel(channelID)
+	check(err)
+	if !valid {
+		return res, errors.New("Invalid channel name")
 	}
 	//Build request
 	h := http.Client()
@@ -194,7 +202,9 @@ func (c *Client) List() {
 func (c *Client) Members(channelID string) (*http.Response, error) {
 	var res = new(http.Response)
 	//Validate name string
-	if !validChannel(channelID) {
+	valid, err := validChannel(channelID)
+	check(err)
+	if !valid {
 		return res, errors.New("Invalid channel name")
 	}
 	//Build request
@@ -256,6 +266,6 @@ func check(e error) {
 
 // Checks if name is over 21 characters, and only contains
 // lower-case letters, numbers, hyphens, and underscores
-func validChannel(n string) bool {
+func validChannel(n string) (bool, error) {
 	return regexp.MatchString("^(a-z0-9-_){1,21}$", n)
 }
