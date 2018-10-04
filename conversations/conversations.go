@@ -30,16 +30,17 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strings"
 )
 
 const (
-	url = "https://slack.com/api/conversations."
+	convURL = "https://slack.com/api/conversations."
 )
 
 // Creates a new client with an access token
-func newClient(t string) Client {
+func newClient(t string) *Client {
 	c := new(Client)
 	c.setToken(t)
 	return c
@@ -74,7 +75,7 @@ func (c *Client) Close(name string) (r *http.Response, e error) {
 	p := url.Values{}
 	p.Add("token", c.token)
 	p.Add("channel", name)
-	req, err := http.PostForm(url+"close", p)
+	req, err := http.PostForm(convURL+"close", p)
 	check(err)
 	//Send Request
 	res, e := h.Do(req)
@@ -96,7 +97,7 @@ func (c *Client) Create(name string) (r *http.Response, e error) {
 	p := url.Values{}
 	p.Add("token", c.token)
 	p.Add("name", name)
-	req, err := http.PostForm(url+"create", p)
+	req, err := http.PostForm(convURL+"create", p)
 	check(err)
 	//Send Request
 	res, e := h.Do(req)
@@ -119,7 +120,7 @@ func (c *Client) CreatePrivate(name string) (r *http.Response, e error) {
 	p.Add("token", c.token)
 	p.Add("name", name)
 	p.Add("is_private", "true")
-	req, err := http.PostForm(url+"create", p)
+	req, err := http.PostForm(convURL+"create", p)
 	check(err)
 	//Send Request
 	res, e := h.Do(req)
@@ -154,7 +155,7 @@ func (c *Client) Invite(name string, users ...string) (r *http.Response, e error
 	p.Add("token", c.token)
 	p.Add("channel", name)
 	p.Add("users", strings.Join(users, ","))
-	req, err := http.PostForm(url+"create", p)
+	req, err := http.PostForm(convURL+"create", p)
 	check(err)
 	//Send Request
 	res, e := h.Do(req)
@@ -201,7 +202,7 @@ func (c *Client) Members(channelID string) (*http.Response, error) {
 	p := url.Values{}
 	p.Add("token", c.token)
 	p.Add("channel", channelID)
-	req, err := http.Get(url + "members?" + p.Encode())
+	req, err := http.Get(convURL + "members?" + p.Encode())
 	check(err)
 	//Send Request
 	res, e := h.Do(req)
@@ -256,5 +257,5 @@ func check(e error) {
 // Checks if name is over 21 characters, and only contains
 // lower-case letters, numbers, hyphens, and underscores
 func validChannel(n string) bool {
-	return regexp.MatchString("^(a-z0-9-_){1,21}$", n), _
+	return regexp.MatchString("^(a-z0-9-_){1,21}$", n)
 }
