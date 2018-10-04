@@ -65,8 +65,7 @@ func (c *Client) Archive() {
 // Close
 // Closes a direct message or multi-person direct message
 // https://api.slack.com/methods/conversations.close
-func (c *Client) Close(name string) (r *http.Response, e error) {
-	var res = new(http.Response)
+func (c *Client) Close(name string) (res *http.Response, err error) {
 	//Validate name string
 	valid, err := validChannel(name)
 	check(err)
@@ -74,14 +73,11 @@ func (c *Client) Close(name string) (r *http.Response, e error) {
 		return res, errors.New("invalid channel name")
 	}
 	//Build request
-	h := http.Client()
 	p := url.Values{}
 	p.Add("token", c.token)
 	p.Add("channel", name)
-	req, err := http.PostForm(convURL+"close", p)
-	check(err)
 	//Send Request
-	res, err = h.Do(req)
+	res, err = http.PostForm(convURL+"close", p)
 	check(err)
 	//Return Response
 	return res, nil
@@ -90,8 +86,7 @@ func (c *Client) Close(name string) (r *http.Response, e error) {
 // Create
 // Initiates a public channel-based conversation
 // https://api.slack.com/methods/conversations.create
-func (c *Client) Create(name string) (r *http.Response, e error) {
-	var res = new(http.Response)
+func (c *Client) Create(name string) (res *http.Response, err error) {
 	//Validate name string
 	valid, err := validChannel(name)
 	check(err)
@@ -99,14 +94,11 @@ func (c *Client) Create(name string) (r *http.Response, e error) {
 		return res, errors.New("invalid channel name")
 	}
 	//Build request
-	h := http.Client()
 	p := url.Values{}
 	p.Add("token", c.token)
 	p.Add("name", name)
-	req, err := http.PostForm(convURL+"create", p)
-	check(err)
 	//Send Request
-	res, err = h.Do(req)
+	res, err = http.PostForm(convURL+"create", p)
 	check(err)
 	//Return Response
 	return res, nil
@@ -115,8 +107,7 @@ func (c *Client) Create(name string) (r *http.Response, e error) {
 // CreatePrivate
 // Initiates a private channel-based conversation
 // https://api.slack.com/methods/conversations.create
-func (c *Client) CreatePrivate(name string) (r *http.Response, e error) {
-	var res = new(http.Response)
+func (c *Client) CreatePrivate(name string) (res *http.Response, err error) {
 	//Validate name string
 	valid, err := validChannel(name)
 	check(err)
@@ -124,15 +115,12 @@ func (c *Client) CreatePrivate(name string) (r *http.Response, e error) {
 		return res, errors.New("invalid channel name")
 	}
 	//Build request
-	h := http.Client()
 	p := url.Values{}
 	p.Add("token", c.token)
 	p.Add("name", name)
 	p.Add("is_private", "true")
-	req, err := http.PostForm(convURL+"create", p)
-	check(err)
 	//Send Request
-	res, err = h.Do(req)
+	res, err = http.PostForm(convURL+"create", p)
 	check(err)
 	//Return Response
 	return res, nil
@@ -153,8 +141,7 @@ func (c *Client) Info() {
 // Invite
 // Invites users to a channel.
 // https://api.slack.com/methods/conversations.invite
-func (c *Client) Invite(name string, users ...string) (r *http.Response, e error) {
-	var res = new(http.Response)
+func (c *Client) Invite(name string, users ...string) (res *http.Response, err error) {
 	//Validate name string
 	valid, err := validChannel(name)
 	check(err)
@@ -162,15 +149,12 @@ func (c *Client) Invite(name string, users ...string) (r *http.Response, e error
 		return res, errors.New("invalid channel name")
 	}
 	//Build request
-	h := http.Client()
 	p := url.Values{}
 	p.Add("token", c.token)
 	p.Add("channel", name)
 	p.Add("users", strings.Join(users, ","))
-	req, err := http.PostForm(convURL+"create", p)
-	check(err)
 	//Send Request
-	res, err = h.Do(req)
+	res, err = http.PostForm(convURL+"create", p)
 	check(err)
 	//Return Response
 	return res, nil
@@ -203,8 +187,7 @@ func (c *Client) List() {
 // Members
 // Retrieve members of a conversation.
 // https://api.slack.com/methods/conversations.members
-func (c *Client) Members(channelID string) (*http.Response, error) {
-	var res = new(http.Response)
+func (c *Client) Members(channelID string) (res *http.Response, err error) {
 	//Validate name string
 	valid, err := validChannel(channelID)
 	check(err)
@@ -212,14 +195,11 @@ func (c *Client) Members(channelID string) (*http.Response, error) {
 		return res, errors.New("invalid channel name")
 	}
 	//Build request
-	h := http.Client()
 	p := url.Values{}
 	p.Add("token", c.token)
 	p.Add("channel", channelID)
-	req, err := http.Get(convURL + "members?" + p.Encode())
-	check(err)
 	//Send Request
-	res, e := h.Do(req)
+	res, err = http.Get(convURL + "members?" + p.Encode())
 	check(err)
 	//Return Response
 	return res, nil
