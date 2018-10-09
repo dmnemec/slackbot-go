@@ -56,14 +56,12 @@ func (c *Client) setToken(t string) {
 	c.token = t
 }
 
-// Archive
-// Archives a conversation
+// Archive a conversation
 // https://api.slack.com/methods/conversations.archive
 func (c *Client) Archive() {
 }
 
-// Close
-// Closes a direct message or multi-person direct message
+// Close a direct message or multi-person direct message
 // https://api.slack.com/methods/conversations.close
 func (c *Client) Close(name string) (res *http.Response, err error) {
 	//Validate name string
@@ -83,8 +81,7 @@ func (c *Client) Close(name string) (res *http.Response, err error) {
 	return res, nil
 }
 
-// Create
-// Initiates a public channel-based conversation
+// Create initiates a public channel-based conversation
 // https://api.slack.com/methods/conversations.create
 func (c *Client) Create(name string) (res *http.Response, err error) {
 	//Validate name string
@@ -104,8 +101,7 @@ func (c *Client) Create(name string) (res *http.Response, err error) {
 	return res, nil
 }
 
-// CreatePrivate
-// Initiates a private channel-based conversation
+// CreatePrivate initiates a private channel-based conversation
 // https://api.slack.com/methods/conversations.create
 func (c *Client) CreatePrivate(name string) (res *http.Response, err error) {
 	//Validate name string
@@ -126,20 +122,17 @@ func (c *Client) CreatePrivate(name string) (res *http.Response, err error) {
 	return res, nil
 }
 
-// History
-// Fetches a conversation's history of messages and events
+// History fetches a conversation's history of messages and events
 // https://api.slack.com/methods/conversations.history
 func (c *Client) History() {
 }
 
-// Info
-// Retrieve information about a conversation
+// Info retrieve information about a conversation
 // https://api.slack.com/methods/conversations.info
 func (c *Client) Info() {
 }
 
-// Invite
-// Invites users to a channel.
+// Invite users to a channel.
 // https://api.slack.com/methods/conversations.invite
 func (c *Client) Invite(name string, users ...string) (res *http.Response, err error) {
 	//Validate name string
@@ -160,32 +153,27 @@ func (c *Client) Invite(name string, users ...string) (res *http.Response, err e
 	return res, nil
 }
 
-// Join
-// Joins an existing conversation.
+// Join an existing conversation.
 // https://api.slack.com/methods/conversations.join
 func (c *Client) Join() {
 }
 
-// Kick
-// Removes a user from a conversation.
+// Kick a user from a conversation.
 // https://api.slack.com/methods/conversations.kick
 func (c *Client) Kick() {
 }
 
-// Leave
-// Leaves a conversation.
+// Leave a conversation.
 // https://api.slack.com/methods/conversations.leave
 func (c *Client) Leave() {
 }
 
-// List
-// Lists all channels in a Slack team.
+// List all channels in a Slack team.
 // https://api.slack.com/methods/conversations.list
 func (c *Client) List() {
 }
 
-// Members
-// Retrieve members of a conversation.
+// Members retrieves members of a conversation.
 // https://api.slack.com/methods/conversations.members
 func (c *Client) Members(channelID string) (res *http.Response, err error) {
 	//Validate name string
@@ -205,43 +193,37 @@ func (c *Client) Members(channelID string) (res *http.Response, err error) {
 	return res, nil
 }
 
-// Open
-// Opens or resumes a direct message or multi-person direct message.
+// Open or resumes a direct message or multi-person direct message.
 // https://api.slack.com/methods/conversations.open
 func (c *Client) Open() {
 }
 
-// Rename
-// Renames a conversation.
+// Rename a conversation.
 // https://api.slack.com/methods/conversations.rename
 func (c *Client) Rename() {
 }
 
-// Replies
-// Retrieve a thread of messages posted to a conversation
+// Replies - retrieves a thread of messages posted to a conversation
 // https://api.slack.com/methods/conversations.replies
 func (c *Client) Replies() {
 }
 
-// SetPurpose
-// Sets the purpose for a conversation.
+// SetPurpose sets the purpose for a conversation.
 // https://api.slack.com/methods/conversations.setPurpose
 func (c *Client) SetPurpose() {
 }
 
-// SetTopic
-// Sets the topic for a conversation.
+// SetTopic sets the topic for a conversation.
 // https://api.slack.com/methods/conversations.setTopic
 func (c *Client) SetTopic() {
 }
 
-// Unarchive
-// Reverses conversation archival.
+// Unarchive reverses conversation archival.
 // https://api.slack.com/methods/conversations.unarchive
 func (c *Client) Unarchive() {
 }
 
-// Space-saving function to check errors
+// check is a space-saving function to check errors
 func check(e error) {
 	if e != nil {
 		log.Fatal(e)
