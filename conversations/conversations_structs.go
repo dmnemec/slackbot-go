@@ -6,3 +6,9 @@ type createChannelStruct struct {
 	IsPrivate bool     `json:"is_private"`
 	UserIds   []string `json:"user_ids"`
 }
+
+type setPurposeStruct struct {
+	Token   string `json:"token"`
+	Channel string `json:"channel"`
+	Purpose string `json:"purpose"`
+}
