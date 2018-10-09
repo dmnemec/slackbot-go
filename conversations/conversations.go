@@ -27,6 +27,8 @@ Completion List
 */
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"log"
 	"net/http"
@@ -39,8 +41,8 @@ const (
 	convURL = "https://slack.com/api/conversations."
 )
 
-// Creates a new client with an access token
-func newClient(t string) *Client {
+// NewClient creates a new client with an access token
+func NewClient(t string) *Client {
 	c := new(Client)
 	c.setToken(t)
 	return c
@@ -83,7 +85,7 @@ func (c *Client) Close(name string) (res *http.Response, err error) {
 
 // Create initiates a public channel-based conversation
 // https://api.slack.com/methods/conversations.create
-func (c *Client) Create(name string) (res *http.Response, err error) {
+func (c *Client) Create(name string, private bool, members ...string) (res *http.Response, err error) {
 	//Validate name string
 	valid, err := validChannel(name)
 	check(err)
@@ -91,11 +93,20 @@ func (c *Client) Create(name string) (res *http.Response, err error) {
 		return res, errors.New("invalid channel name")
 	}
 	//Build request
-	p := url.Values{}
-	p.Add("token", c.token)
-	p.Add("name", name)
+	reqBod := createChannelStruct{
+		Token:     c.token,
+		Name:      name,
+		IsPrivate: private,
+		UserIds:   members,
+	}
+	bod, err := json.Marshal(reqBod)
+	check(err)
+	req, err := http.NewRequest("POST", convURL+"create", bytes.NewBuffer(bod))
+	req.Header.Set("Authorization", c.token)
+	req.Header.Set("Content-Type", "application/json")
 	//Send Request
-	res, err = http.PostForm(convURL+"create", p)
+	client := &http.Client{}
+	res, err = client.Do(req)
 	check(err)
 	//Return Response
 	return res, nil
