@@ -112,27 +112,6 @@ func (c *Client) Create(name string, private bool, members ...string) (res *http
 	return res, nil
 }
 
-// CreatePrivate initiates a private channel-based conversation
-// https://api.slack.com/methods/conversations.create
-func (c *Client) CreatePrivate(name string) (res *http.Response, err error) {
-	//Validate name string
-	valid, err := validChannel(name)
-	check(err)
-	if !valid {
-		return res, errors.New("invalid channel name")
-	}
-	//Build request
-	p := url.Values{}
-	p.Add("token", c.token)
-	p.Add("name", name)
-	p.Add("is_private", "true")
-	//Send Request
-	res, err = http.PostForm(convURL+"create", p)
-	check(err)
-	//Return Response
-	return res, nil
-}
-
 // History fetches a conversation's history of messages and events
 // https://api.slack.com/methods/conversations.history
 func (c *Client) History() {
@@ -221,7 +200,30 @@ func (c *Client) Replies() {
 
 // SetPurpose sets the purpose for a conversation.
 // https://api.slack.com/methods/conversations.setPurpose
-func (c *Client) SetPurpose() {
+func (c *Client) SetPurpose(name, purpose string) (res *http.Response, err error) {
+	//Validate name string
+	valid, err := validChannel(name)
+	check(err)
+	if !valid {
+		return res, errors.New("invalid channel name")
+	}
+	//Build request
+	reqBod := setPurposeStruct{
+		Token:   c.token,
+		Channel: name,
+		Purpose: purpose,
+	}
+	bod, err := json.Marshal(reqBod)
+	check(err)
+	req, err := http.NewRequest("POST", convURL+"setpurpose", bytes.NewBuffer(bod))
+	req.Header.Set("Authorization", c.token)
+	req.Header.Set("Content-Type", "application/json")
+	//Send Request
+	client := &http.Client{}
+	res, err = client.Do(req)
+	check(err)
+	//Return Response
+	return res, nil
 }
 
 // SetTopic sets the topic for a conversation.
@@ -244,5 +246,5 @@ func check(e error) {
 // Checks if name is over 21 characters, and only contains
 // lower-case letters, numbers, hyphens, and underscores
 func validChannel(n string) (bool, error) {
-	return regexp.MatchString("^(a-z0-9-_){1,21}$", n)
+	return regexp.MatchString("^([a-z0-9-_]){1,21}$", n)
 }
