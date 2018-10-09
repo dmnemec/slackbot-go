@@ -102,7 +102,7 @@ func (c *Client) Create(name string, private bool, members ...string) (res *http
 	bod, err := json.Marshal(reqBod)
 	check(err)
 	req, err := http.NewRequest("POST", convURL+"create", bytes.NewBuffer(bod))
-	req.Header.Set("Authorization", c.token)
+	req.Header.Set("Authorization", "Bearer "+c.token)
 	req.Header.Set("Content-Type", "application/json")
 	//Send Request
 	client := &http.Client{}
@@ -216,7 +216,7 @@ func (c *Client) SetPurpose(name, purpose string) (res *http.Response, err error
 	bod, err := json.Marshal(reqBod)
 	check(err)
 	req, err := http.NewRequest("POST", convURL+"setpurpose", bytes.NewBuffer(bod))
-	req.Header.Set("Authorization", c.token)
+	req.Header.Set("Authorization", "Bearer "+c.token)
 	req.Header.Set("Content-Type", "application/json")
 	//Send Request
 	client := &http.Client{}
