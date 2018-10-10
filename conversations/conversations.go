@@ -166,12 +166,6 @@ func (c *Client) List() {
 // Members retrieves members of a conversation.
 // https://api.slack.com/methods/conversations.members
 func (c *Client) Members(channelID string) (res *http.Response, err error) {
-	//Validate name string
-	valid, err := validChannel(channelID)
-	check(err)
-	if !valid {
-		return res, errors.New("invalid channel name")
-	}
 	//Build request
 	client := &http.Client{}
 	p := url.Values{}
