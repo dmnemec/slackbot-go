@@ -12,3 +12,9 @@ type setPurposeStruct struct {
 	Channel string `json:"channel"`
 	Purpose string `json:"purpose"`
 }
+
+type inviteStruct struct {
+	Token   string   `json:"token"`
+	Channel string   `json:"channel"`
+	Users   []string `json:"users"`
+}

@@ -16,7 +16,7 @@ Completion List
 [ ] Kick
 [ ] Leave
 [ ] List
-[ ] Members
+[x] Members
 [ ] Open
 [ ] Rename
 [ ] Replies
@@ -34,7 +34,6 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
-	"strings"
 )
 
 const (
@@ -132,12 +131,19 @@ func (c *Client) Invite(name string, users ...string) (res *http.Response, err e
 		return res, errors.New("invalid channel name")
 	}
 	//Build request
-	p := url.Values{}
-	p.Add("token", c.token)
-	p.Add("channel", name)
-	p.Add("users", strings.Join(users, ","))
+	reqBod := inviteStruct{
+		Token:   c.token,
+		Channel: name,
+		Users:   users,
+	}
+	bod, err := json.Marshal(reqBod)
+	check(err)
+	req, err := http.NewRequest("POST", convURL+"invite", bytes.NewBuffer(bod))
+	req.Header.Set("Authorization", "Bearer "+c.token)
+	req.Header.Set("Content-Type", "application/json")
 	//Send Request
-	res, err = http.PostForm(convURL+"create", p)
+	client := &http.Client{}
+	res, err = client.Do(req)
 	check(err)
 	//Return Response
 	return res, nil
