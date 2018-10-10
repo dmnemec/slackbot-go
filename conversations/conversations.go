@@ -20,7 +20,7 @@ Completion List
 [ ] Open
 [ ] Rename
 [ ] Replies
-[ ] Set Purpose
+[x] Set Purpose
 [ ] Set Topic
 [ ] Unarchive
 
@@ -173,11 +173,15 @@ func (c *Client) Members(channelID string) (res *http.Response, err error) {
 		return res, errors.New("invalid channel name")
 	}
 	//Build request
+	client := &http.Client{}
 	p := url.Values{}
 	p.Add("token", c.token)
 	p.Add("channel", channelID)
+	req, err := http.NewRequest("GET", convURL+"members?"+p.Encode(), nil)
+	req.Header.Set("Authorization", "Bearer "+c.token)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	//Send Request
-	res, err = http.Get(convURL + "members?" + p.Encode())
+	res, err = client.Do(req)
 	check(err)
 	//Return Response
 	return res, nil
