@@ -23,6 +23,7 @@ Completion List
 [x] Set Purpose
 [ ] Set Topic
 [ ] Unarchive
+[ ] Write
 
 */
 
@@ -38,6 +39,7 @@ import (
 
 const (
 	convURL = "https://slack.com/api/conversations."
+	chatURL = "https://slack.com/api/chat."
 )
 
 // NewClient creates a new client with an access token
@@ -190,6 +192,28 @@ func (c *Client) Members(channelID string) (res *http.Response, err error) {
 // Open or resumes a direct message or multi-person direct message.
 // https://api.slack.com/methods/conversations.open
 func (c *Client) Open() {
+}
+
+// PostMessage sends a message to a channel.
+// https://api.slack.com/methods/chat.postMessage
+func (c *Client) PostMessage(channelID, text string) (res *http.Response, err error) {
+	//Build request
+	reqBod := postMessageStruct{
+		Token:   c.token,
+		Channel: channelID,
+		Text:    text,
+	}
+	bod, err := json.Marshal(reqBod)
+	check(err)
+	req, err := http.NewRequest("POST", chatURL+"postMessage", bytes.NewBuffer(bod))
+	req.Header.Set("Authorization", "Bearer "+c.token)
+	req.Header.Set("Content-Type", "application/json")
+	//Send Request
+	client := &http.Client{}
+	res, err = client.Do(req)
+	check(err)
+	//Return Response
+	return res, nil
 }
 
 // Rename a conversation.

@@ -13,10 +13,10 @@ import (
 
 //Outputs the user ids of the people in the listed channel
 //To Run: go run test_conversations.go <channel_id>
-func main2() {
+func main() {
 	slackAPI := client.New(os.Getenv("WORKSPACE_ACCESS_TOKEN"))
 
-	res, err := slackAPI.Members(os.Args[1])
+	res, err := slackAPI.Client.PostMessage(os.Args[1], "test message")
 	if err != nil {
 		fmt.Println(err.Error())
 	}
