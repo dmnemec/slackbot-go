@@ -14,10 +14,10 @@ const (
 // Posts a regular message to the channel in Slack
 func PostChannel(payload, name string, config Config) {
 	//var body = []byte(`{"text":"` + payload + `"}`)
-	var body = []byte(`{"link_names":1,"parse":"full","text":"` + payload + `"}`)
+	var body = []byte(`{"text":"` + payload + `"}`)
 
 	fmt.Println(string(body[:]))
-	url := GetHook(config, name)
+	url, _, _ := GetHook(config, name)
 	req, err := http.Post(url, jsonA, bytes.NewBuffer(body))
 	if err != nil {
 		log.Fatal(err)
@@ -26,7 +26,7 @@ func PostChannel(payload, name string, config Config) {
 }
 
 func PostReply(payload, responseUrl string) {
-	var body = []byte(`{"link_names":1,"parse":"full","text":"` + payload + `"}`)
+	var body = []byte(`{"text":"` + payload + `"}`)
 
 	fmt.Println(string(body[:]))
 	req, err := http.Post(responseUrl, jsonA, bytes.NewBuffer(body))
@@ -49,7 +49,7 @@ func PostFancy(summary, excerpt, color string) {
 	message.Attachments[0].Fallback = excerpt
 	message.Attachments[0].Text = excerpt
 	message.Attachments[0].Color = color //TODO create custom color maker
-	message.Attachments[0].Pretext = "Definately not self-aware"
+	message.Attachments[0].Pretext = "Definitely not self-aware"
 	message.Attachments[0].Title = summary
 	message.Attachments[0].Title_Link = ""
 

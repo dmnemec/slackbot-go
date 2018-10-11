@@ -16,30 +16,34 @@ Completion List
 [ ] Kick
 [ ] Leave
 [ ] List
-[ ] Members
+[x] Members
 [ ] Open
 [ ] Rename
 [ ] Replies
-[ ] Set Purpose
+[x] Set Purpose
 [ ] Set Topic
 [ ] Unarchive
 
 */
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
 	"net/url"
+	"regexp"
 )
 
 const (
-	url = "https://slack.com/api/conversations."
+	convURL = "https://slack.com/api/conversations."
 )
 
-// Creates a new client with an access token
-func newClient(t string) Client {
+// NewClient creates a new client with an access token
+func NewClient(t string) *Client {
 	c := new(Client)
-	c.setToke(t)
+	c.setToken(t)
 	return c
 }
 
@@ -53,181 +57,190 @@ func (c *Client) setToken(t string) {
 	c.token = t
 }
 
-// Archive
-// Archives a conversation
+// Archive a conversation
 // https://api.slack.com/methods/conversations.archive
 func (c *Client) Archive() {
 }
 
-// Close
-// Closes a direct message or multi-person direct message
+// Close a direct message or multi-person direct message
 // https://api.slack.com/methods/conversations.close
-func (c *Client) Close(name string) (r *http.Response, e error) {
+func (c *Client) Close(name string) (res *http.Response, err error) {
 	//Validate name string
-	if !validChannel(name) {
-		return errors.New("Invalid channel name.")
+	valid, err := validChannel(name)
+	check(err)
+	if !valid {
+		return res, errors.New("invalid channel name")
 	}
 	//Build request
-	h := http.Client()
 	p := url.Values{}
 	p.Add("token", c.token)
 	p.Add("channel", name)
-	req, err := http.PostForm(url+"close", p)
-	check(err)
 	//Send Request
-	res, e := h.Do(req)
+	res, err = http.PostForm(convURL+"close", p)
 	check(err)
 	//Return Response
 	return res, nil
 }
 
-// Create
-// Initiates a public channel-based conversation
+// Create initiates a public channel-based conversation
 // https://api.slack.com/methods/conversations.create
-func (c *Client) Create(name string) (r *http.Response, e error) {
+func (c *Client) Create(name string, private bool, members ...string) (res *http.Response, err error) {
 	//Validate name string
-	if !validChannel(name) {
-		return errors.New("Invalid channel name.")
+	valid, err := validChannel(name)
+	check(err)
+	if !valid {
+		return res, errors.New("invalid channel name")
 	}
 	//Build request
-	h := http.Client()
-	p := url.Values{}
-	p.Add("token", c.token)
-	p.Add("name", name)
-	req, err := http.PostForm(url+"create", p)
-	check(err)
-	//Send Request
-	res, e := h.Do(req)
-	check(err)
-	//Return Response
-	return res, nil
-}
-
-// CreatePrivate
-// Initiates a private channel-based conversation
-// https://api.slack.com/methods/conversations.create
-func (c *Client) CreatePrivate(name string) (r *http.Response, e error) {
-	//Validate name string
-	if !validChannel(name) {
-		return errors.New("Invalid channel name.")
+	reqBod := createChannelStruct{
+		Token:     c.token,
+		Name:      name,
+		IsPrivate: private,
+		UserIds:   members,
 	}
-	//Build request
-	h := http.Client()
-	p := url.Values{}
-	p.Add("token", c.token)
-	p.Add("name", name)
-	p.Add("is_private", "true")
-	req, err := http.PostForm(url+"create", p)
+	bod, err := json.Marshal(reqBod)
 	check(err)
+	req, err := http.NewRequest("POST", convURL+"create", bytes.NewBuffer(bod))
+	req.Header.Set("Authorization", "Bearer "+c.token)
+	req.Header.Set("Content-Type", "application/json")
 	//Send Request
-	res, e := h.Do(req)
+	client := &http.Client{}
+	res, err = client.Do(req)
 	check(err)
 	//Return Response
 	return res, nil
 }
 
-// History
-// Fetches a conversation's history of messages and events
+// History fetches a conversation's history of messages and events
 // https://api.slack.com/methods/conversations.history
 func (c *Client) History() {
 }
 
-// Info
-// Retrieve information about a conversation
+// Info retrieve information about a conversation
 // https://api.slack.com/methods/conversations.info
 func (c *Client) Info() {
 }
 
-// Invite
-// Invites users to a channel.
+// Invite users to a channel.
 // https://api.slack.com/methods/conversations.invite
-func (c *Client) Invite(name string, users ...string) (r *http.Response, e error) {
+func (c *Client) Invite(name string, users ...string) (res *http.Response, err error) {
 	//Validate name string
-	if !validChannel(name) {
-		return errors.New("Invalid channel name.")
+	valid, err := validChannel(name)
+	check(err)
+	if !valid {
+		return res, errors.New("invalid channel name")
 	}
 	//Build request
-	h := http.Client()
-	p := url.Values{}
-	p.Add("token", c.token)
-	p.Add("channel", name)
-	p.Add("users", strings.Join(users, ","))
-	req, err := http.PostForm(url+"create", p)
+	reqBod := inviteStruct{
+		Token:   c.token,
+		Channel: name,
+		Users:   users,
+	}
+	bod, err := json.Marshal(reqBod)
 	check(err)
+	req, err := http.NewRequest("POST", convURL+"invite", bytes.NewBuffer(bod))
+	req.Header.Set("Authorization", "Bearer "+c.token)
+	req.Header.Set("Content-Type", "application/json")
 	//Send Request
-	res, e := h.Do(req)
+	client := &http.Client{}
+	res, err = client.Do(req)
 	check(err)
 	//Return Response
 	return res, nil
 }
 
-// Join
-// Joins an existing conversation.
+// Join an existing conversation.
 // https://api.slack.com/methods/conversations.join
 func (c *Client) Join() {
 }
 
-// Kick
-// Removes a user from a conversation.
+// Kick a user from a conversation.
 // https://api.slack.com/methods/conversations.kick
 func (c *Client) Kick() {
 }
 
-// Leave
-// Leaves a conversation.
+// Leave a conversation.
 // https://api.slack.com/methods/conversations.leave
 func (c *Client) Leave() {
 }
 
-// List
-// Lists all channels in a Slack team.
+// List all channels in a Slack team.
 // https://api.slack.com/methods/conversations.list
 func (c *Client) List() {
 }
 
-// Members
-// Retrieve members of a conversation.
+// Members retrieves members of a conversation.
 // https://api.slack.com/methods/conversations.members
-func (c *Client) Members() {
+func (c *Client) Members(channelID string) (res *http.Response, err error) {
+	//Build request
+	client := &http.Client{}
+	p := url.Values{}
+	p.Add("token", c.token)
+	p.Add("channel", channelID)
+	req, err := http.NewRequest("GET", convURL+"members?"+p.Encode(), nil)
+	req.Header.Set("Authorization", "Bearer "+c.token)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	//Send Request
+	res, err = client.Do(req)
+	check(err)
+	//Return Response
+	return res, nil
 }
 
-// Open
-// Opens or resumes a direct message or multi-person direct message.
+// Open or resumes a direct message or multi-person direct message.
 // https://api.slack.com/methods/conversations.open
 func (c *Client) Open() {
 }
 
-// Rename
-// Renames a conversation.
+// Rename a conversation.
 // https://api.slack.com/methods/conversations.rename
 func (c *Client) Rename() {
 }
 
-// Replies
-// Retrieve a thread of messages posted to a conversation
+// Replies - retrieves a thread of messages posted to a conversation
 // https://api.slack.com/methods/conversations.replies
 func (c *Client) Replies() {
 }
 
-// SetPurpose
-// Sets the purpose for a conversation.
+// SetPurpose sets the purpose for a conversation.
 // https://api.slack.com/methods/conversations.setPurpose
-func (c *Client) SetPurpose() {
+func (c *Client) SetPurpose(name, purpose string) (res *http.Response, err error) {
+	//Validate name string
+	valid, err := validChannel(name)
+	check(err)
+	if !valid {
+		return res, errors.New("invalid channel name")
+	}
+	//Build request
+	reqBod := setPurposeStruct{
+		Token:   c.token,
+		Channel: name,
+		Purpose: purpose,
+	}
+	bod, err := json.Marshal(reqBod)
+	check(err)
+	req, err := http.NewRequest("POST", convURL+"setpurpose", bytes.NewBuffer(bod))
+	req.Header.Set("Authorization", "Bearer "+c.token)
+	req.Header.Set("Content-Type", "application/json")
+	//Send Request
+	client := &http.Client{}
+	res, err = client.Do(req)
+	check(err)
+	//Return Response
+	return res, nil
 }
 
-// SetTopic
-// Sets the topic for a conversation.
+// SetTopic sets the topic for a conversation.
 // https://api.slack.com/methods/conversations.setTopic
 func (c *Client) SetTopic() {
 }
 
-// Unarchive
-// Reverses conversation archival.
+// Unarchive reverses conversation archival.
 // https://api.slack.com/methods/conversations.unarchive
 func (c *Client) Unarchive() {
 }
 
-// Space-saving function to check errors
+// check is a space-saving function to check errors
 func check(e error) {
 	if e != nil {
 		log.Fatal(e)
@@ -236,13 +249,6 @@ func check(e error) {
 
 // Checks if name is over 21 characters, and only contains
 // lower-case letters, numbers, hyphens, and underscores
-func validName(n string) bool {
-	l := len(n)
-
-	if l > 21 || l < 1 {
-		return false
-	} else if m, _ := regexp.MatchString("^(a-z0-9-_)+$", n); !m {
-		return false
-	}
-	return true
+func validChannel(n string) (bool, error) {
+	return regexp.MatchString("^([a-z0-9-_]){1,21}$", n)
 }
