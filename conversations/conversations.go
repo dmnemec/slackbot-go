@@ -46,31 +46,31 @@ const (
 	chatURL = "https://slack.com/api/chat."
 )
 
-// NewClient creates a new client with an access token
-func NewClient(t string) *Client {
-	c := new(Client)
+// NewConvoClient creates a new client with an access token
+func NewConvoClient(t string) *ConvoClient {
+	c := new(ConvoClient)
 	c.setToken(t)
 	return c
 }
 
-// The Client struct
-type Client struct {
+// The ConvoClient struct
+type ConvoClient struct {
 	token string
 }
 
 // Change the access token for some reason
-func (c *Client) setToken(t string) {
+func (c *ConvoClient) setToken(t string) {
 	c.token = t
 }
 
 // Archive a conversation
 // https://api.slack.com/methods/conversations.archive
-func (c *Client) Archive() {
+func (c *ConvoClient) Archive() {
 }
 
 // Close a direct message or multi-person direct message
 // https://api.slack.com/methods/conversations.close
-func (c *Client) Close(name string) (res structs.CloseResponse, err error) {
+func (c *ConvoClient) Close(name string) (res structs.CloseResponse, err error) {
 	//Validate name string
 	valid, err := validChannel(name)
 	check(err)
@@ -81,13 +81,13 @@ func (c *Client) Close(name string) (res structs.CloseResponse, err error) {
 	p := url.Values{}
 	p.Add("token", c.token)
 	p.Add("channel", name)
-	err = urlEncodedClient(convURL, "close", c.token, p, &res)
+	err = urlEncodedConvoClient(convURL, "close", c.token, p, &res)
 	return
 }
 
 // Create initiates a public channel-based conversation
 // https://api.slack.com/methods/conversations.create
-func (c *Client) Create(name string, private bool, members ...string) (res *http.Response, err error) {
+func (c *ConvoClient) Create(name string, private bool, members ...string) (res structs.CreateResponse, err error) {
 	//Validate name string
 	valid, err := validChannel(name)
 	check(err)
@@ -101,32 +101,25 @@ func (c *Client) Create(name string, private bool, members ...string) (res *http
 		IsPrivate: private,
 		UserIds:   members,
 	}
-	bod, err := json.Marshal(reqBod)
-	check(err)
-	req, err := http.NewRequest("POST", convURL+"create", bytes.NewBuffer(bod))
-	req.Header.Set("Authorization", "Bearer "+c.token)
-	req.Header.Set("Content-Type", "application/json")
-	//Send Request
-	client := &http.Client{}
-	res, err = client.Do(req)
+	err = jsonRequest(convURL, "create", c.token, reqBod, &res)
 	check(err)
 	//Return Response
-	return res, nil
+	return
 }
 
 // History fetches a conversation's history of messages and events
 // https://api.slack.com/methods/conversations.history
-func (c *Client) History() {
+func (c *ConvoClient) History() {
 }
 
 // Info retrieve information about a conversation
 // https://api.slack.com/methods/conversations.info
-func (c *Client) Info() {
+func (c *ConvoClient) Info() {
 }
 
 // Invite users to a channel.
 // https://api.slack.com/methods/conversations.invite
-func (c *Client) Invite(name string, users ...string) (res structs.InviteResponse, err error) {
+func (c *ConvoClient) Invite(name string, users ...string) (res structs.InviteResponse, err error) {
 	//Validate name string
 	valid, err := validChannel(name)
 	check(err)
@@ -146,51 +139,51 @@ func (c *Client) Invite(name string, users ...string) (res structs.InviteRespons
 
 // Join an existing conversation.
 // https://api.slack.com/methods/conversations.join
-func (c *Client) Join() {
+func (c *ConvoClient) Join() {
 }
 
 // Kick a user from a conversation.
 // https://api.slack.com/methods/conversations.kick
-func (c *Client) Kick() {
+func (c *ConvoClient) Kick() {
 }
 
 // Leave a conversation.
 // https://api.slack.com/methods/conversations.leave
-func (c *Client) Leave() {
+func (c *ConvoClient) Leave() {
 }
 
 // List all channels in a Slack team.
 // https://api.slack.com/methods/conversations.list
-func (c *Client) List() (res structs.ListResponse, err error) {
+func (c *ConvoClient) List() (res structs.ListResponse, err error) {
 	//Build request
 	p := url.Values{}
 	p.Add("token", c.token)
 	p.Add("exclude_archived", "true")
 	p.Add("types", "public_channel")
-	err = urlEncodedClient(convURL, "list", c.token, p, &res)
+	err = urlEncodedConvoClient(convURL, "list", c.token, p, &res)
 	return
 }
 
 // Members retrieves members of a conversation.
 // https://api.slack.com/methods/conversations.members
-func (c *Client) Members(channelID string) (res structs.MembersResponse, err error) {
+func (c *ConvoClient) Members(channelID string) (res structs.MembersResponse, err error) {
 	//Build request
 	p := url.Values{}
 	p.Add("token", c.token)
 	p.Add("channel", channelID)
-	err = urlEncodedClient(convURL, "members", c.token, p, &res)
+	err = urlEncodedConvoClient(convURL, "members", c.token, p, &res)
 	check(err)
 	return
 }
 
 // Open or resumes a direct message or multi-person direct message.
 // https://api.slack.com/methods/conversations.open
-func (c *Client) Open() {
+func (c *ConvoClient) Open() {
 }
 
 // PostMessage sends a message to a channel.
 // https://api.slack.com/methods/chat.postMessage
-func (c *Client) PostMessage(channelID, text string) (res structs.PostMessageResponse, err error) {
+func (c *ConvoClient) PostMessage(channelID, text string) (res structs.PostMessageResponse, err error) {
 	//Build request
 	reqBod := postMessageStruct{
 		Token:   c.token,
@@ -205,17 +198,17 @@ func (c *Client) PostMessage(channelID, text string) (res structs.PostMessageRes
 
 // Rename a conversation.
 // https://api.slack.com/methods/conversations.rename
-func (c *Client) Rename() {
+func (c *ConvoClient) Rename() {
 }
 
 // Replies - retrieves a thread of messages posted to a conversation
 // https://api.slack.com/methods/conversations.replies
-func (c *Client) Replies() {
+func (c *ConvoClient) Replies() {
 }
 
 // SetPurpose sets the purpose for a conversation.
 // https://api.slack.com/methods/conversations.setPurpose
-func (c *Client) SetPurpose(name, purpose string) (res structs.SetPurposeResponse, err error) {
+func (c *ConvoClient) SetPurpose(name, purpose string) (res structs.SetPurposeResponse, err error) {
 	//Validate name string
 	valid, err := validChannel(name)
 	check(err)
@@ -236,12 +229,12 @@ func (c *Client) SetPurpose(name, purpose string) (res structs.SetPurposeRespons
 
 // SetTopic sets the topic for a conversation.
 // https://api.slack.com/methods/conversations.setTopic
-func (c *Client) SetTopic() {
+func (c *ConvoClient) SetTopic() {
 }
 
 // Unarchive reverses conversation archival.
 // https://api.slack.com/methods/conversations.unarchive
-func (c *Client) Unarchive() {
+func (c *ConvoClient) Unarchive() {
 }
 
 // check is a space-saving function to check errors
@@ -258,7 +251,7 @@ func validChannel(n string) (bool, error) {
 }
 
 // Creates a urlencoded request with the appropriate headers on the http request
-func urlEncodedClient(url, endpoint, token string, vals url.Values, output interface{}) (err error) {
+func urlEncodedConvoClient(url, endpoint, token string, vals url.Values, output interface{}) (err error) {
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url+endpoint+"?"+vals.Encode(), nil)
 	req.Header.Set("Authorization", "Bearer "+token)

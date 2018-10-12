@@ -7,13 +7,13 @@ import (
 
 // Client is a total Slack API client
 type Client struct {
-	*conversations.Client
+	*conversations.ConvoClient
 	Token string
 }
 
 func (c *Client) new(token string) *Client {
 	c = &Client{}
-	c.Client = conversations.NewClient(token)
+	c.ConvoClient = conversations.NewConvoClient(token)
 	c.Token = token
 	return c
 }
