@@ -18,12 +18,12 @@ Completion List
 [ ] List
 [x] Members
 [ ] Open
+[x] PostMessage
 [ ] Rename
 [ ] Replies
 [x] Set Purpose
 [ ] Set Topic
 [ ] Unarchive
-[ ] Write
 
 */
 
@@ -168,7 +168,21 @@ func (c *Client) Leave() {
 
 // List all channels in a Slack team.
 // https://api.slack.com/methods/conversations.list
-func (c *Client) List() {
+func (c *Client) List() (res *http.Response, err error) {
+	//Build request
+	client := &http.Client{}
+	p := url.Values{}
+	p.Add("token", c.token)
+	p.Add("exclude_archived", "true")
+	p.Add("types", "public_channel")
+	req, err := http.NewRequest("GET", convURL+"list?"+p.Encode(), nil)
+	req.Header.Set("Authorization", "Bearer "+c.token)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	//Send Request
+	res, err = client.Do(req)
+	check(err)
+	//Return Response
+	return res, nil
 }
 
 // Members retrieves members of a conversation.
