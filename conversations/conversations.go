@@ -197,7 +197,7 @@ func (c *Client) PostMessage(channelID, text string) (res structs.PostMessageRes
 		Channel: channelID,
 		Text:    text,
 	}
-	err = jsonRequest(convURL, "postMessage", c.token, reqBod, &res)
+	err = jsonRequest(chatURL, "postMessage", c.token, reqBod, &res)
 	check(err)
 	//Return Response
 	return

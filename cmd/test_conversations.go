@@ -3,9 +3,7 @@ package main
 import (
 	//Global
 	"fmt"
-	"io/ioutil"
 	"os"
-	"strings"
 
 	//Local
 	"github.com/dmnemec/slackbot-go/client"
@@ -20,11 +18,5 @@ func main2() {
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	defer res.Body.Close()
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-
-	fmt.Printf("Response:\n%v", strings.Replace(string(body), ",", "\n", -1))
+	fmt.Printf("Response:\n%+v", res)
 }
