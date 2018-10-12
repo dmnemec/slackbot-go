@@ -11,4 +11,4 @@ Package Descriptions
   * Perform actions on events
   * Pull project names
 * converstaions - implementing the Slack Conversations API
-  * 4/18 Functions Started (untested)
+  * 7/19 Functions
