@@ -2,7 +2,7 @@ package client
 
 import (
 	//Local
-	"github.com/DMNemec/slackbot-go/conversations"
+	"github.com/dmnemec/slackbot-go/conversations"
 )
 
 // Client is a total Slack API client

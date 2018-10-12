@@ -16,7 +16,7 @@ import (
 func main() {
 	slackAPI := client.New(os.Getenv("WORKSPACE_ACCESS_TOKEN"))
 
-	res, err := slackAPI.Client.PostMessage(os.Args[1], "test message")
+	res, err := slackAPI.PostMessage(os.Args[1], "test message")
 	if err != nil {
 		fmt.Println(err.Error())
 	}

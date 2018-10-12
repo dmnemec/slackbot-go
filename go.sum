@@ -1,5 +1,3 @@
-github.com/DMNemec/slackbot-go v0.0.0-20181010195241-582b9e542d44 h1:DY34/gp29txNg99r6NHsu264LiYDkWhlK577zZopda8=
-github.com/DMNemec/slackbot-go v0.0.0-20181010195241-582b9e542d44/go.mod h1:lGos9NhCIZsLjRJrGSe/3mCyt/soac5ne85jDPx9eZs=
 golang.org/x/net v0.0.0-20181005035420-146acd28ed58 h1:otZG8yDCO4LVps5+9bxOeNiCvgmOyt96J3roHTYs7oE=
 golang.org/x/net v0.0.0-20181005035420-146acd28ed58/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
 golang.org/x/oauth2 v0.0.0-20181003184128-c57b0facaced h1:4oqSq7eft7MdPKBGQK11X9WYUxmj6ZLgGTqYIbY1kyw=
