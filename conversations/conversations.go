@@ -28,6 +28,7 @@ Completion List
 */
 
 import (
+	//Global
 	"bytes"
 	"encoding/json"
 	"errors"
@@ -35,6 +36,9 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
+
+	//Local
+	"github.com/dmnemec/slackbot-go/structs"
 )
 
 const (
@@ -77,8 +81,9 @@ func (c *Client) Close(name string) (res *http.Response, err error) {
 	p := url.Values{}
 	p.Add("token", c.token)
 	p.Add("channel", name)
+	client, req, err := urlEncodedClient(convURL, "close", c.token, p)
 	//Send Request
-	res, err = http.PostForm(convURL+"close", p)
+	res, err = client.Do(req)
 	check(err)
 	//Return Response
 	return res, nil
@@ -170,14 +175,12 @@ func (c *Client) Leave() {
 // https://api.slack.com/methods/conversations.list
 func (c *Client) List() (res *http.Response, err error) {
 	//Build request
-	client := &http.Client{}
 	p := url.Values{}
 	p.Add("token", c.token)
 	p.Add("exclude_archived", "true")
 	p.Add("types", "public_channel")
-	req, err := http.NewRequest("GET", convURL+"list?"+p.Encode(), nil)
-	req.Header.Set("Authorization", "Bearer "+c.token)
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	client, req, err := urlEncodedClient(convURL, "list", c.token, p)
+	check(err)
 	//Send Request
 	res, err = client.Do(req)
 	check(err)
@@ -189,13 +192,10 @@ func (c *Client) List() (res *http.Response, err error) {
 // https://api.slack.com/methods/conversations.members
 func (c *Client) Members(channelID string) (res *http.Response, err error) {
 	//Build request
-	client := &http.Client{}
 	p := url.Values{}
 	p.Add("token", c.token)
 	p.Add("channel", channelID)
-	req, err := http.NewRequest("GET", convURL+"members?"+p.Encode(), nil)
-	req.Header.Set("Authorization", "Bearer "+c.token)
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	client, req, err := urlEncodedClient(convURL, "members", c.token, p)
 	//Send Request
 	res, err = client.Do(req)
 	check(err)
@@ -242,7 +242,7 @@ func (c *Client) Replies() {
 
 // SetPurpose sets the purpose for a conversation.
 // https://api.slack.com/methods/conversations.setPurpose
-func (c *Client) SetPurpose(name, purpose string) (res *http.Response, err error) {
+func (c *Client) SetPurpose(name, purpose string) (res structs.SetPurposeResponse, err error) {
 	//Validate name string
 	valid, err := validChannel(name)
 	check(err)
@@ -255,14 +255,7 @@ func (c *Client) SetPurpose(name, purpose string) (res *http.Response, err error
 		Channel: name,
 		Purpose: purpose,
 	}
-	bod, err := json.Marshal(reqBod)
-	check(err)
-	req, err := http.NewRequest("POST", convURL+"setpurpose", bytes.NewBuffer(bod))
-	req.Header.Set("Authorization", "Bearer "+c.token)
-	req.Header.Set("Content-Type", "application/json")
-	//Send Request
-	client := &http.Client{}
-	res, err = client.Do(req)
+	err = jsonRequest(convURL, "setPurpose", c.token, reqBod, &res)
 	check(err)
 	//Return Response
 	return res, nil
@@ -289,4 +282,29 @@ func check(e error) {
 // lower-case letters, numbers, hyphens, and underscores
 func validChannel(n string) (bool, error) {
 	return regexp.MatchString("^([a-z0-9-_]){1,21}$", n)
+}
+
+// Creates a urlencoded request with the appropriate headers on the http request
+func urlEncodedClient(url, endpoint, token string, vals url.Values) (client *http.Client, req *http.Request, err error) {
+	client = &http.Client{}
+	req, err = http.NewRequest("GET", url+endpoint+"?"+vals.Encode(), nil)
+	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	return
+}
+
+func jsonRequest(url, endpoint, token string, input, output interface{}) error {
+	bod, err := json.Marshal(input)
+	check(err)
+	req, err := http.NewRequest("POST", url+endpoint, bytes.NewBuffer(bod))
+	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Content-Type", "application/json")
+	//Send Request
+	client := &http.Client{}
+	res, err := client.Do(req)
+	check(err)
+	defer res.Body.Close()
+	err = json.NewDecoder(res.Body).Decode(&output)
+	check(err)
+	return err
 }
