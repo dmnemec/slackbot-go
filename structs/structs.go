@@ -145,6 +145,13 @@ type MembersResponse struct {
 	} `json:"response_metadata"`
 }
 
+//PostEphemeralResponse is returned from the PostEphemeral method
+type PostEphemeralResponse struct {
+	Ok        bool   `json:"ok"`
+	Error     string `json:"error"`
+	MessageTs string `json:"message_ts"`
+}
+
 //PostMessageResponse is returned from the PostMessage method
 type PostMessageResponse struct {
 	Ok      bool   `json:"ok"`

@@ -7,12 +7,6 @@ type createChannelStruct struct {
 	UserIds   []string `json:"user_ids"`
 }
 
-type postMessageStruct struct {
-	Token   string `json:"token"`
-	Channel string `json:"channel"`
-	Text    string `json:"text"`
-}
-
 type setPurposeStruct struct {
 	Token   string `json:"token"`
 	Channel string `json:"channel"`

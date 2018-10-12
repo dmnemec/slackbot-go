@@ -8,7 +8,6 @@ Completion List
 [ ] Archive
 [x] Close
 [x] Create
-[x] Create Private
 [ ] History
 [ ] Info
 [x] Invite
@@ -43,7 +42,6 @@ import (
 
 const (
 	convURL = "https://slack.com/api/conversations."
-	chatURL = "https://slack.com/api/chat."
 )
 
 // NewConvoClient creates a new client with an access token
@@ -179,21 +177,6 @@ func (c *ConvoClient) Members(channelID string) (res structs.MembersResponse, er
 // Open or resumes a direct message or multi-person direct message.
 // https://api.slack.com/methods/conversations.open
 func (c *ConvoClient) Open() {
-}
-
-// PostMessage sends a message to a channel.
-// https://api.slack.com/methods/chat.postMessage
-func (c *ConvoClient) PostMessage(channelID, text string) (res structs.PostMessageResponse, err error) {
-	//Build request
-	reqBod := postMessageStruct{
-		Token:   c.token,
-		Channel: channelID,
-		Text:    text,
-	}
-	err = jsonRequest(chatURL, "postMessage", c.token, reqBod, &res)
-	check(err)
-	//Return Response
-	return
 }
 
 // Rename a conversation.
