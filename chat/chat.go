@@ -15,6 +15,11 @@ const (
 	chatURL = "https://slack.com/api/chat."
 )
 
+/*
+GetPermalink
+Update
+*/
+
 // NewChatClient creates a new client with an access token
 func NewChatClient(t string) *ChatClient {
 	c := new(ChatClient)
@@ -30,6 +35,21 @@ type ChatClient struct {
 // Change the access token for some reason
 func (c *ChatClient) setToken(t string) {
 	c.token = t
+}
+
+// Delete removes a message from a channel
+// https://api.slack.com/methods/chat.delete
+func (c *ChatClient) Delete(channelID, ts string) (res structs.DeleteResponse, err error) {
+	//Build request
+	reqBod := deleteStruct{
+		Token:     c.token,
+		Channel:   channelID,
+		Timestamp: ts,
+	}
+	err = jsonRequest(chatURL, "delete", c.token, reqBod, &res)
+	check(err)
+	//Return Response
+	return
 }
 
 // PostEphemeral sends a message to a channel.
@@ -58,6 +78,22 @@ func (c *ChatClient) PostMessage(channelID, text string) (res structs.PostMessag
 		Text:    text,
 	}
 	err = jsonRequest(chatURL, "postMessage", c.token, reqBod, &res)
+	check(err)
+	//Return Response
+	return
+}
+
+// Unfurl adds custom unfurling action to an object
+// https://api.slack.com/methods/chat.unfurl
+func (c *ChatClient) Unfurl(channelID, ts string, unfurls url.Values) (res structs.UnfurlResponse, err error) {
+	//Build request
+	reqBod := unfurlStruct{
+		Token:     c.token,
+		Channel:   channelID,
+		Timestamp: ts,
+		Unfurls:   unfurls.Encode(),
+	}
+	err = jsonRequest(chatURL, "unfurl", c.token, reqBod, &res)
 	check(err)
 	//Return Response
 	return

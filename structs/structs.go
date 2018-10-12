@@ -51,6 +51,14 @@ type CreateResponse struct {
 	} `json:"channel"`
 }
 
+//DeleteResponse is returned by the Delete method
+type DeleteResponse struct {
+	Ok      bool   `json:"ok"`
+	Error   string `json:"error"`
+	Channel string `json:"channel"`
+	Ts      string `json:"ts"`
+}
+
 //InviteResponse is returned from the Invite method
 type InviteResponse struct {
 	Ok      bool   `json:"ok"`
@@ -178,4 +186,10 @@ type SetPurposeResponse struct {
 	Ok      bool   `json:"ok"`
 	Purpose string `json:"purpose"`
 	Error   string `json:"error"`
+}
+
+//UnfurlResposne is returned from the Unfurl method
+type UnfurlResponse struct {
+	Ok    bool   `json:"ok"`
+	Error string `json:"error"`
 }
