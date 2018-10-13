@@ -140,6 +140,7 @@ func jsonRequest(url, endpoint, token string, input, output interface{}) error {
 	bod, err := json.Marshal(input)
 	check(err)
 	req, err := http.NewRequest("POST", url+endpoint, bytes.NewBuffer(bod))
+	check(err)
 	req.Header.Set("Authorization", "Bearer "+token)
 	req.Header.Set("Content-Type", "application/json")
 	//Send Request
