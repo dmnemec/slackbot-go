@@ -26,3 +26,10 @@ type unfurlStruct struct {
 	Timestamp string `json:"ts"`
 	Unfurls   string `json:"unfurls"`
 }
+
+type updateStruct struct {
+	Token     string `json:"token"`
+	Channel   string `json:"channel"`
+	Text      string `json:"text"`
+	Timestamp string `json:"ts"`
+}

@@ -188,8 +188,17 @@ type SetPurposeResponse struct {
 	Error   string `json:"error"`
 }
 
-//UnfurlResposne is returned from the Unfurl method
+//UnfurlResponse is returned from the Unfurl method
 type UnfurlResponse struct {
 	Ok    bool   `json:"ok"`
 	Error string `json:"error"`
+}
+
+//UpdateResponse is returned by the Update method
+type UpdateResponse struct {
+	Ok      bool   `json:"ok"`
+	Error   string `json:"error"`
+	Channel string `json:"channel"`
+	Ts      string `json:"ts"`
+	Text    string `json:"text"`
 }

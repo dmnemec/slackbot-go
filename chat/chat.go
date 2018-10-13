@@ -99,6 +99,22 @@ func (c *ChatClient) Unfurl(channelID, ts string, unfurls url.Values) (res struc
 	return
 }
 
+// Update changes a message in Slack (ie. edit)
+// https://api.slack.com/methods/chat.unupdate
+func (c *ChatClient) Update(channelID, ts, text string) (res structs.UpdateResponse, err error) {
+	//Build request
+	reqBod := updateStruct{
+		Token:     c.token,
+		Channel:   channelID,
+		Timestamp: ts,
+		Text:      text,
+	}
+	err = jsonRequest(chatURL, "update", c.token, reqBod, &res)
+	check(err)
+	//Return Response
+	return
+}
+
 // check is a space-saving function to check errors
 func check(e error) {
 	if e != nil {
