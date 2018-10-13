@@ -59,6 +59,14 @@ type DeleteResponse struct {
 	Ts      string `json:"ts"`
 }
 
+//GetPermalinkResponse is returned from the GetPermalink method
+type GetPermalinkResponse struct {
+	Ok        bool   `json:"ok"`
+	Channel   string `json:"channel"`
+	Error     string `json:"error"`
+	Permalink string `json:"permalink"`
+}
+
 //InviteResponse is returned from the Invite method
 type InviteResponse struct {
 	Ok      bool   `json:"ok"`

@@ -15,11 +15,6 @@ const (
 	chatURL = "https://slack.com/api/chat."
 )
 
-/*
-GetPermalink
-Update
-*/
-
 // NewChatClient creates a new client with an access token
 func NewChatClient(t string) *ChatClient {
 	c := new(ChatClient)
@@ -49,6 +44,19 @@ func (c *ChatClient) Delete(channelID, ts string) (res structs.DeleteResponse, e
 	err = jsonRequest(chatURL, "delete", c.token, reqBod, &res)
 	check(err)
 	//Return Response
+	return
+}
+
+// GetPermalink retrieves a permanent link to a message in Slack
+// https://api.slack.com/methods/chat.getPermalink
+func (c *ChatClient) GetPermalink(channelID, mts string) (res structs.GetPermalinkResponse, err error) {
+	//Build Request
+	p := url.Values{}
+	p.Add("token", c.token)
+	p.Add("channel", channelID)
+	p.Add("message_ts", mts)
+	//Return response
+	err = urlEncodedClient(chatURL, "getPermalink", c.token, p, &res)
 	return
 }
 
@@ -123,7 +131,7 @@ func check(e error) {
 }
 
 // Creates a urlencoded request with the appropriate headers on the http request
-func urlEncodedConvoClient(url, endpoint, token string, vals url.Values, output interface{}) (err error) {
+func urlEncodedClient(url, endpoint, token string, vals url.Values, output interface{}) (err error) {
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url+endpoint+"?"+vals.Encode(), nil)
 	req.Header.Set("Authorization", "Bearer "+token)
