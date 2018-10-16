@@ -1,4 +1,4 @@
-package chat
+package ugusers
 
 import (
 	//Local
@@ -7,41 +7,43 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/dmnemec/slackbot-go/structs"
 )
 
 const (
-	ugcURL = "https://slack.com/api/usergroups.users."
+	ugURL = "https://slack.com/api/usergroups.users."
 )
 
-// NewUGCClient creates a new client with an access token
-func NewUGCClient(t string) *UGCClient {
-	c := new(UGCClient)
+// NewUgClient creates a new client with an access token
+func NewUgClient(t string) *UgClient {
+	c := new(UgClient)
 	c.setToken(t)
 	return c
 }
 
-//UGCClient is the way to interface with Slack's chat methods
-type UGCClient struct {
+//UgClient is the way to interface with Slack's chat methods
+type UgClient struct {
 	token string
 }
 
 // Change the access token for some reason
-func (c *UGCClient) setToken(t string) {
+func (c *UgClient) setToken(t string) {
 	c.token = t
 }
 
-// Delete removes a message from a channel
-// https://api.slack.com/methods/chat.delete
-func (c *UGCClient) Delete(channelID, ts string) (res structs.DeleteResponse, err error) {
+// Update updates the list of users that belong to a User Group
+// https://api.slack.com/methods/usergroups.users.update
+func (c *UgClient) Update(usergroup string, users []string) (res structs.UpdateUgResponse, err error) {
+
 	//Build request
-	reqBod := deleteStruct{
+	reqBod := updateStruct{
 		Token:     c.token,
-		Channel:   channelID,
-		Timestamp: ts,
+		Usergroup: usergroup,
+		Users:     strings.Join(users, ","),
 	}
-	err = jsonRequest(chatURL, "delete", c.token, reqBod, &res)
+	err = jsonRequest(ugURL, "update", c.token, reqBod, &res)
 	check(err)
 	//Return Response
 	return
@@ -49,14 +51,14 @@ func (c *UGCClient) Delete(channelID, ts string) (res structs.DeleteResponse, er
 
 // GetPermalink retrieves a permanent link to a message in Slack
 // https://api.slack.com/methods/chat.getPermalink
-func (c *UGCClient) GetPermalink(channelID, mts string) (res structs.GetPermalinkResponse, err error) {
+func (c *UgClient) GetPermalink(channelID, mts string) (res structs.GetPermalinkResponse, err error) {
 	//Build Request
 	p := url.Values{}
 	p.Add("token", c.token)
 	p.Add("channel", channelID)
 	p.Add("message_ts", mts)
 	//Return response
-	err = urlEncodedClient(chatURL, "getPermalink", c.token, p, &res)
+	err = urlEncodedClient(ugURL, "getPermalink", c.token, p, &res)
 	return
 }
 
