@@ -238,3 +238,10 @@ type UpdateUgResponse struct {
 		UserCount int      `json:"user_count"`
 	} `json:"usergroup"`
 }
+
+//GetUgListResponse is returned by GetUgList method
+type GetUgListResponse struct {
+	Ok    bool     `json:"ok"`
+	Error string   `json:"error"`
+	Users []string `json:"users"`
+}
