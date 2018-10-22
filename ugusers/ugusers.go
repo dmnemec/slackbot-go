@@ -57,7 +57,7 @@ func (c *UgClient) GetUgList(usergroup string) (res structs.GetUgListResponse, e
 	p.Add("token", c.token)
 	p.Add("usergroup", usergroup)
 	//Return response
-	err = urlEncodedClient(ugURL, "getPermalink", c.token, p, &res)
+	err = urlEncodedClient(ugURL, "list", c.token, p, &res)
 	return
 }
 
