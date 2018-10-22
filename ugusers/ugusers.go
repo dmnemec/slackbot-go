@@ -49,14 +49,13 @@ func (c *UgClient) Update(usergroup string, users []string) (res structs.UpdateU
 	return
 }
 
-// GetPermalink retrieves a permanent link to a message in Slack
-// https://api.slack.com/methods/chat.getPermalink
-func (c *UgClient) GetPermalink(channelID, mts string) (res structs.GetPermalinkResponse, err error) {
+// GetUgList retrieves a list of users to a message in Slack
+// https://api.slack.com/methods/usergroups.users.list
+func (c *UgClient) GetUgList(usergroup string) (res structs.GetUgListResponse, err error) {
 	//Build Request
 	p := url.Values{}
 	p.Add("token", c.token)
-	p.Add("channel", channelID)
-	p.Add("message_ts", mts)
+	p.Add("usergroup", usergroup)
 	//Return response
 	err = urlEncodedClient(ugURL, "getPermalink", c.token, p, &res)
 	return
