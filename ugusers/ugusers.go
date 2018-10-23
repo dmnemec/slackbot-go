@@ -33,9 +33,9 @@ func (c *UgClient) setToken(t string) {
 	c.token = t
 }
 
-// Update updates the list of users that belong to a User Group
+// UpdateUG updates the list of users that belong to a User Group
 // https://api.slack.com/methods/usergroups.users.update
-func (c *UgClient) Update(usergroup string, users []string) (res structs.UpdateUgResponse, err error) {
+func (c *UgClient) UpdateUG(usergroup string, users []string) (res structs.UpdateUgResponse, err error) {
 
 	//Build request
 	reqBod := updateStruct{
