@@ -239,6 +239,33 @@ type UpdateUgResponse struct {
 	} `json:"usergroup"`
 }
 
+//CreateUsergroupsResponse is returned by the CreateUsergroups method
+type CreateUsergroupsResponse struct {
+	Ok        bool   `json:"ok"`
+	Error     string `json:"error"`
+	Usergroup struct {
+		ID          string      `json:"id"`
+		TeamID      string      `json:"team_id"`
+		IsUsergroup bool        `json:"is_usergroup"`
+		Name        string      `json:"name"`
+		Description string      `json:"description"`
+		Handle      string      `json:"handle"`
+		IsExternal  bool        `json:"is_external"`
+		DateCreate  int         `json:"date_create"`
+		DateUpdate  int         `json:"date_update"`
+		DateDelete  int         `json:"date_delete"`
+		AutoType    interface{} `json:"auto_type"`
+		CreatedBy   string      `json:"created_by"`
+		UpdatedBy   string      `json:"updated_by"`
+		DeletedBy   interface{} `json:"deleted_by"`
+		Prefs       struct {
+			Channels []interface{} `json:"channels"`
+			Groups   []interface{} `json:"groups"`
+		} `json:"prefs"`
+		UserCount string `json:"user_count"`
+	} `json:"usergroup"`
+}
+
 //GetUgListResponse is returned by GetUgList method
 type GetUgListResponse struct {
 	Ok    bool     `json:"ok"`
