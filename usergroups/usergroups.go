@@ -35,7 +35,7 @@ func (c *UsergroupsClient) setToken(t string) {
 
 // CreateUsergroups creates a User Group
 // https://api.slack.com/methods/usergroups.create
-func (c *UsergroupsClient) UpdateUsergroups(name string) (res structs.UpdateUsergroupsResponse, err error) {
+func (c *UsergroupsClient) CreateUsergroups(name string) (res structs.CreateUsergroupsResponse, err error) {
 
 	//Build request
 	reqBod := updateStruct{
