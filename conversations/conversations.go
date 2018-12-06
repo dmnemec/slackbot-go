@@ -243,7 +243,7 @@ func check(e error) {
 // Checks if name is over 21 characters, and only contains
 // lower-case letters, numbers, hyphens, and underscores
 func validChannel(n string) (bool, error) {
-	return regexp.MatchString("^([a-z0-9-_]){1,21}$", n)
+	return regexp.MatchString("^([A-Za-z0-9-_]){1,21}$", n)
 }
 
 // Creates a urlencoded request with the appropriate headers on the http request
