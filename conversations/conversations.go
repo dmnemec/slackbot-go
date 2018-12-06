@@ -212,7 +212,20 @@ func (c *ConvoClient) SetPurpose(name, purpose string) (res structs.SetPurposeRe
 
 // SetTopic sets the topic for a conversation.
 // https://api.slack.com/methods/conversations.setTopic
-func (c *ConvoClient) SetTopic() {
+func (c *ConvoClient) SetTopic(name string, topic string) (res structs.SetTopicResponse, err error) {
+	valid, err := validChannel(name)
+	check(err)
+	if !valid {
+		return res, errors.New("Invalid Channel Name")
+	}
+	reqBod := setTopicStruct{
+		Token:   c.token,
+		Channel: name,
+		Topic:   topic,
+	}
+	err = jsonRequest(convURL, "setTopic", c.token, reqBod, &res)
+	check(err)
+	return res, err
 }
 
 // Unarchive reverses conversation archival.

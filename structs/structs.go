@@ -196,6 +196,12 @@ type SetPurposeResponse struct {
 	Error   string `json:"error"`
 }
 
+type SetTopicResponse struct {
+	Topic string `json:"topic"`
+	Ok    bool   `json:"ok"`
+	Error string `json:"error"`
+}
+
 //UnfurlResponse is returned from the Unfurl method
 type UnfurlResponse struct {
 	Ok    bool   `json:"ok"`
