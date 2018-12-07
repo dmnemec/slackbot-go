@@ -118,11 +118,11 @@ func (c *ConvoClient) Info(name string) (res structs.InfoResponse, err error) {
 	if !valid {
 		return res, errors.New("Invalid channel name")
 	}
-	reqBod := getInfoRequest{
-		Token:   c.token,
-		Channel: name,
-	}
-	err = getInfoHttpRequest(convURL, "info", c.token, reqBod, &res)
+
+	p := url.Values{}
+	p.Add("token", c.token)
+	p.Add("channel", channelID)
+	err = urlEncodedConvoClient(convURL, "info", c.token, p, &res)
 	check(err)
 	return res, nil
 }
@@ -280,19 +280,6 @@ func jsonRequest(url, endpoint, token string, input, output interface{}) error {
 	req.Header.Set("Authorization", "Bearer "+token)
 	req.Header.Set("Content-Type", "application/json")
 	//Send Request
-	client := &http.Client{}
-	res, err := client.Do(req)
-	check(err)
-	defer res.Body.Close()
-	err = json.NewDecoder(res.Body).Decode(&output)
-	check(err)
-	return err
-}
-
-func getInfoHttpRequest(url, endpoint, token string, input getInfoRequest, output interface{}) error {
-	req, err := http.NewRequest("GET", url+endpoint+"?token="+token+"&channel="+input.Channel, nil)
-	check(err)
-	req.Header.Set("Authorization", "Bearer "+token)
 	client := &http.Client{}
 	res, err := client.Do(req)
 	check(err)
