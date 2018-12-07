@@ -121,7 +121,7 @@ func (c *ConvoClient) Info(name string) (res structs.InfoResponse, err error) {
 
 	p := url.Values{}
 	p.Add("token", c.token)
-	p.Add("channel", channelID)
+	p.Add("channel", name)
 	err = urlEncodedConvoClient(convURL, "info", c.token, p, &res)
 	check(err)
 	return res, nil
