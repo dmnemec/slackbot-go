@@ -22,3 +22,8 @@ type inviteStruct struct {
 	Channel string   `json:"channel"`
 	Users   []string `json:"users"`
 }
+
+type getInfoRequest struct {
+	Token   string `json:"token"`
+	Channel string `json:"channel"`
+}

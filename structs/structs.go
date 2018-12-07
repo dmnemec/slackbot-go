@@ -272,6 +272,46 @@ type CreateUsergroupsResponse struct {
 	} `json:"usergroup"`
 }
 
+type InfoResponse struct {
+	Ok      bool `json:"ok"`
+	Channel struct {
+		ID                 string        `json:"id"`
+		Name               string        `json:"name"`
+		IsChannel          bool          `json:"is_channel"`
+		IsGroup            bool          `json:"is_group"`
+		IsIm               bool          `json:"is_im"`
+		Created            int           `json:"created"`
+		Creator            string        `json:"creator"`
+		IsArchived         bool          `json:"is_archived"`
+		IsGeneral          bool          `json:"is_general"`
+		Unlinked           int           `json:"unlinked"`
+		NameNormalized     string        `json:"name_normalized"`
+		IsReadOnly         bool          `json:"is_read_only"`
+		IsShared           bool          `json:"is_shared"`
+		ParentConversation interface{}   `json:"parent_conversation"`
+		IsExtShared        bool          `json:"is_ext_shared"`
+		IsOrgShared        bool          `json:"is_org_shared"`
+		PendingShared      []interface{} `json:"pending_shared"`
+		IsPendingExtShared bool          `json:"is_pending_ext_shared"`
+		IsMember           bool          `json:"is_member"`
+		IsPrivate          bool          `json:"is_private"`
+		IsMpim             bool          `json:"is_mpim"`
+		LastRead           string        `json:"last_read"`
+		Topic              struct {
+			Value   string `json:"value"`
+			Creator string `json:"creator"`
+			LastSet int    `json:"last_set"`
+		} `json:"topic"`
+		Purpose struct {
+			Value   string `json:"value"`
+			Creator string `json:"creator"`
+			LastSet int    `json:"last_set"`
+		} `json:"purpose"`
+		PreviousNames []string `json:"previous_names"`
+		Locale        string   `json:"locale"`
+	} `json:"channel"`
+}
+
 //GetUgListResponse is returned by GetUgList method
 type GetUgListResponse struct {
 	Ok    bool     `json:"ok"`

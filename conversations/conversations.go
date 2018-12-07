@@ -112,7 +112,19 @@ func (c *ConvoClient) History() {
 
 // Info retrieve information about a conversation
 // https://api.slack.com/methods/conversations.info
-func (c *ConvoClient) Info() {
+func (c *ConvoClient) Info(name string) (res structs.InfoResponse, err error) {
+	valid, err := validChannel(name)
+	check(err)
+	if !valid {
+		return res, errors.New("Invalid channel name")
+	}
+	reqBod := inviteStruct{
+		Token:   c.token,
+		Channel: name,
+	}
+	err = jsonRequest(convURL, "info", c.token, reqBod, &res)
+	check(err)
+	return res, nil
 }
 
 // Invite users to a channel.
