@@ -118,7 +118,7 @@ func (c *ConvoClient) Info(name string) (res structs.InfoResponse, err error) {
 	if !valid {
 		return res, errors.New("Invalid channel name")
 	}
-	reqBod := inviteStruct{
+	reqBod := getInfoRequest{
 		Token:   c.token,
 		Channel: name,
 	}
