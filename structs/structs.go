@@ -310,6 +310,7 @@ type InfoResponse struct {
 		PreviousNames []string `json:"previous_names"`
 		Locale        string   `json:"locale"`
 	} `json:"channel"`
+	Error string `json:"error"`
 }
 
 //GetUgListResponse is returned by GetUgList method
