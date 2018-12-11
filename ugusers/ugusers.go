@@ -51,7 +51,7 @@ func (c *UgClient) UpdateUG(usergroup string, users []string) (res structs.Updat
 
 // GetUgList retrieves a list of users to a message in Slack
 // https://api.slack.com/methods/usergroups.users.list
-func (c *UgClient) GetUgList(usergroup string) (res structs.GetUgListResponse, err error) {
+func (c *UgClient) GetUgList(usergroup string) (res structs.MembersResponse, err error) {
 	//Build Request
 	p := url.Values{}
 	p.Add("token", c.token)
