@@ -161,6 +161,12 @@ type MembersResponse struct {
 	} `json:"response_metadata"`
 }
 
+type UseGroupUsersList struct {
+	Ok    bool     `json:"ok"`
+	Users []string `json:"users"`
+	Error string   `json:"error"`
+}
+
 //PostEphemeralResponse is returned from the PostEphemeral method
 type PostEphemeralResponse struct {
 	Ok        bool   `json:"ok"`
