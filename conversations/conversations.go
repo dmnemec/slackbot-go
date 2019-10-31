@@ -8,20 +8,20 @@ Completion List
 [ ] Archive
 [x] Close
 [x] Create
-[ ] History
+[x] History
 [X] Info
 [x] Invite
 [ ] Join
 [ ] Kick
 [ ] Leave
-[ ] List
+[x] List
 [x] Members
 [ ] Open
 [x] PostMessage
 [ ] Rename
 [ ] Replies
 [x] Set Purpose
-[ ] Set Topic
+[x] Set Topic
 [ ] Unarchive
 
 */
