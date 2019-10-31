@@ -8,7 +8,7 @@ Completion List
 [ ] Archive
 [x] Close
 [x] Create
-[ ] History
+[x] History
 [ ] Info
 [x] Invite
 [ ] Join
@@ -108,6 +108,18 @@ func (c *ConvoClient) Create(name string, private bool, members ...string) (res 
 // History fetches a conversation's history of messages and events
 // https://api.slack.com/methods/conversations.history
 func (c *ConvoClient) History() {
+	//Validate name string
+	valid, err := validChannel(name)
+	check(err)
+	if !valid {
+		return res, errors.New("invalid channel name")
+	}
+	//Build request
+	p := url.Values{}
+	p.Add("token", c.token)
+	p.Add("channel", name)
+	err = urlEncodedConvoClient(convURL, "history", c.token, p, &res)
+	return
 }
 
 // Info retrieve information about a conversation
