@@ -9,7 +9,7 @@ Completion List
 [x] Close
 [x] Create
 [ ] History
-[ ] Info
+[X] Info
 [x] Invite
 [ ] Join
 [ ] Kick
