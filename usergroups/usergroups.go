@@ -48,6 +48,20 @@ func (c *UsergroupsClient) CreateUsergroups(name string) (res structs.CreateUser
 	return
 }
 
+// https://api.slack.com/methods/usergroups.enable
+func (c *UsergroupsClient) EnableUsergroups(name string) (res structs.UpdateUsergroupsResponse, err error) {
+
+	//Build request
+	reqBod := updateStruct{
+		Token: c.token,
+		Name:  string,
+	}
+	err = jsonRequest(usergroupsURL, "enable", c.token, reqBod, &res)
+	check(err)
+	//Return Response
+	return
+}
+
 // check is a space-saving function to check errors
 func check(e error) {
 	if e != nil {
